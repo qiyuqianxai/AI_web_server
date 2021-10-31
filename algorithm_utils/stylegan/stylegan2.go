@@ -36,9 +36,10 @@ type style_gan_message struct {
 }
 var Style_gan_msg style_gan_message
 
-func Laod_config() (stylegan_info) {
+//Laod_config
+func Laod_config() stylegan_info {
 	Stylegan_config.Fake_img_dir = "static/algorithm/stylegan/fake_imgs"
 	Stylegan_config.User_img_dir = "static/algorithm/stylegan/user_imgs"
-	Stylegan_config.Style_gan_message_path = "algorithm_utils/stylegan/style_gan_message.json"
+	Stylegan_config.Style_gan_message_path = "algorithm_utils/stylegan/message.json"
 	return Stylegan_config
 }

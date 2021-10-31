@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>波波的cv平台</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="description" content="OneTech shop project">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<link rel="stylesheet" type="text/css" href="styles/bootstrap4/bootstrap.min.css">
+<link href="plugins/fontawesome-free-5.0.1/css/fontawesome-all.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/owl.carousel.css">
+<link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/owl.theme.default.css">
+<link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/animate.css">
+<link rel="stylesheet" type="text/css" href="styles/product_styles.css">
+<link rel="stylesheet" type="text/css" href="styles/product_responsive.css">
+<link rel="shortcut icon" type="image/x-icon" href="images/logo.ico" media="screen" />
+</head>
+
+<body>
+
+<div class="super_container">
+	
+	<!-- Header -->
+	
+	<header class="header">
+
+		<!-- Top Bar -->
+
+		<div class="top_bar">
+			<div class="container">
+				<div class="row">
+					<div class="col d-flex flex-row">
+						<div class="top_bar_contact_item"><div class="top_bar_icon"><img src="images/phone.png" alt=""></div>+19115621964</div>
+						<div class="top_bar_contact_item"><div class="top_bar_icon"><img src="images/mail.png" alt=""></div><a href="mailto:2358341499@qq.com">2358341499@qq.com</a></div>
+						<div class="top_bar_content ml-auto">
+
+							<div class="top_bar_user">
+								<div class="user_icon"><img src="images/user.svg" alt=""></div>
+								<div><a href="#">Register</a></div>
+								<div><a href="#">Sign in</a></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>		
+		</div>
+
+		<!-- Header Main -->
+		
+		<!-- Main Navigation -->
+
+		<nav class="main_nav">
+			<div class="container">
+
+                    <!-- Main Nav Menu -->
+                    <div class="main_nav_menu ml-auto col-lg-12">
+                        <ul class="standard_dropdown main_nav_dropdown">
+                            <li class="hassubs col-lg-2">
+                                <a href="#">目标检测<i class="fas fa-chevron-down"></i></a>
+                                <ul>
+                                    <li><a href="#" id="body_detect" class="ai_feature">人体检测<i class="fas fa-chevron-down"></i></a></li>
+                                    <li><a href="#" id="face_detect" class="ai_feature">人脸检测<i class="fas fa-chevron-down"></i></a></li>
+                                    <li><a href="#" id="body_keypoints_detect" class="ai_feature">人体关键点检测<i class="fas fa-chevron-down"></i></a></li>
+                                    <li><a href="#" id="face_keypoints_detect" class="ai_feature">人脸关键点检测<i class="fas fa-chevron-down"></i></a></li>
+                                </ul>
+                            </li>
+                            <li class="hassubs col-lg-2">
+                                <a href="#">目标识别<i class="fas fa-chevron-down"></i></a>
+                                <ul>
+                                    <li><a id="action_reg" class="ai_feature" href="#">行为识别<i class="fas fa-chevron-down"></i></a></li>
+                                    <li><a id="expression_reg" class="ai_feature" href="#">表情识别<i class="fas fa-chevron-down"></i></a></li>
+                                    <li><a id="attention_reg" class="ai_feature" href="#">注意力识别<i class="fas fa-chevron-down"></i></a></li>
+                                </ul>
+                            </li>
+                            <li class="hassubs col-lg-2">
+                                <a href="#">目标跟踪<i class="fas fa-chevron-down"></i></a>
+                                <ul>
+                                    <li><a id="person_track" class="ai_feature" href="#">人体跟踪<i class="fas fa-chevron-down"></i></a></li>
+                                </ul>
+                            </li>
+                            <li class="hassubs col-lg-2">
+                                <a href="#">数据分析<i class="fas fa-chevron-down"></i></a>
+                                <ul>
+                                    <li><a id="dense_analysis" class="ai_feature" href="#">数据分析<i class="fas fa-chevron-down"></i></a></li>
+                                </ul>
+                            </li>
+                            <li class="hassubs col-lg-2">
+                                <a href="#">其它<i class="fas fa-chevron-down"></i></a>
+                                <ul>
+                                    <li><a id="gen_action" class="ai_feature" href="#">暂无<i class="fas fa-chevron-down"></i></a></li>
+                                </ul>
+                            </li>
+
+                        </ul>
+                    </div>
+            </div>
+
+		</nav>
+		
+		<!-- Menu -->
+
+	</header>
+
+	<!-- Single Product -->
+
+	<div class="main_area" style="margin-top: 30px;margin-bottom: 40px;width: 100%">
+		<div class="container" style="margin-left: 30px;min-width: 100%">
+			<div class="row" style="min-width: 100%;margin-bottom: 50px;">
+				<!-- Images -->
+                <div id="video_info" style="margin-right: 40px;margin-left: 40px;max-width: 8%;">
+                    <h3>请选择播放源</h3>
+                    <div style="width: 100%; margin-bottom: 50px" >
+                        <select class="form-control" id="current-video" style="font-family: 微软雅黑; margin-left: 0px">
+                    </select>
+                    </div>
+                    <div id="upload_video" style="margin-bottom: 50px;">
+                        <h3>上传视频</h3>
+                        <input type="file" id="file"><br>
+                        <div id="up_progress">
+                            <div class="progress-item"></div>
+                        </div>
+                    </div>
+                    <h3>当前视频信息</h3>
+                    <div id="play_info"></div>
+                </div>
+				<!-- Selected Image -->
+				<div class="col-lg-8 order-lg-2 order-1" style="height: 80%;margin-left: 20px;">
+					<div class="image_selected" style="height: 100%;">
+                        <img id="show_img" src="images/cover.jpg" alt="">
+                    </div>
+				</div>
+
+				<!-- Description -->
+				<div class="col-lg-2 order-2">
+					<div class="result" style="margin-left: 50px">
+                        <h3 style="text-align: center">操作区</h3>
+                        <div id="operate_area" style="margin-bottom: 50px">
+                            <button id="play_video" class="features btn btn-block btn-primary">播放</button>
+                            <button id="play_stop" class="features btn btn-block btn-primary">暂停</button>
+                            <button id="play_advance" class="features btn btn-block btn-primary">前进</button>
+                            <button id="play_back" class="features btn btn-block btn-primary">后退</button>
+                            <button id="play_accelerate" class="features btn btn-block btn-primary">加速播放</button>
+                            <button id="play_reduce" class="features btn btn-block btn-primary">减速播放</button>
+                            <button id="play_end" class="features btn btn-block btn-primary">关闭</button>
+
+                        </div>
+                        <h3 style="text-align: center">当前使用功能</h3>
+                        <div id="current-function" style="margin-bottom: 50px">
+
+                        </div>
+
+
+					</div>
+				</div>
+
+			</div>
+            <div id="data_summerize"></div>
+            <div class="row" style="min-width: 100%;">
+                <div id="action_data_analysis" class="data_pie col-lg-4"></div>
+                <div id="expression_data_analysis" class="data_pie col-lg-4"></div>
+                <div id="attention_data_analysis" class="data_pie col-lg-4"></div>
+            </div>
+		</div>
+	</div>
+
+	<!-- Copyright -->
+
+	<div class="copyright">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					
+					<div class="copyright_container d-flex flex-sm-row flex-column align-items-center justify-content-start">
+						<div class="copyright_content"><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="styles/bootstrap4/popper.js"></script>
+<script src="styles/bootstrap4/bootstrap.min.js"></script>
+<script src="plugins/greensock/TweenMax.min.js"></script>
+<script src="plugins/greensock/TimelineMax.min.js"></script>
+<script src="plugins/scrollmagic/ScrollMagic.min.js"></script>
+<script src="plugins/greensock/animation.gsap.min.js"></script>
+<script src="plugins/greensock/ScrollToPlugin.min.js"></script>
+<script src="plugins/OwlCarousel2-2.2.1/owl.carousel.js"></script>
+<script src="plugins/easing/easing.js"></script>
+<script src="js/highcharts.js"></script>
+<script src="js/actionReg.js"></script>
+</body>
+
+
+</html>
