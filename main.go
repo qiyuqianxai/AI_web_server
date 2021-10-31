@@ -206,6 +206,7 @@ func main() {
 	r.POST("/realesran/generate_img/", func(c *gin.Context) {
 		err := c.BindJSON(&realesrgan.Realesrgan_msg)
 		if err != nil {
+			log.Println(err)
 			return
 		}
 		//log.Printf("%v",&msg)
