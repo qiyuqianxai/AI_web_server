@@ -10,6 +10,10 @@ user_imgs_dir = "algorithm/realesrgan/user_imgs/" //上传图片地址
 fake_imgs_dir = "algorithm/realesrgan/result_imgs/" //生成图片地址
 
 $(function() {
+
+    window.onbeforeunload = boot_model("realesrgan");
+
+
     var html_str = "";
     // $.each(direction_val, function(key, val) {
     //         if (key !== 'seed' && key !== 'user_img') {
@@ -161,9 +165,7 @@ function generate_image() {
         direction_val['face_enhance'] = false
     direction_val['user_img'] = current_image
     var post_data = JSON.stringify(direction_val)
-    console.log(direction_val)
 
-    console.log(post_data)
     $.ajax({
         url: "/realesran/generate_img/",
         type: "POST",

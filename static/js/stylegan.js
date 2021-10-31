@@ -33,6 +33,9 @@ user_imgs_dir = "algorithm/stylegan/user_imgs/"
 fake_imgs_dir = "algorithm/stylegan/fake_imgs/"
 
 $(function () {
+
+    window.onbeforeunload = boot_model("stylegan");
+
     var html_str = "";
     $.each(direction_val,function (key,val){
         if(key !== 'seed' && key!=='user_img')

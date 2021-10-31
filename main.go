@@ -17,6 +17,13 @@ import (
 	"time"
 )
 
+type model_states struct {
+	ActionReg  bool `json:"actionReg"`
+	Realesrgan bool `json:"realesrgan"`
+	Stylegan   bool `json:"stylegan"`
+}
+var model_stat model_states
+
 func main() {
 	//gin.SetMode(gin.DebugMode)
 	r := gin.Default()
@@ -49,6 +56,41 @@ func main() {
 
 	r.GET("/actionReg", func(c *gin.Context) {
 		c.Redirect(http.StatusFound, "/static/actionReg.html")
+	})
+
+	r.POST("/update_models_states", func(c *gin.Context) {
+		err := c.BindJSON(&model_stat)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		//log.Printf("%v",&msg)
+		model_states_json_path := "algorithm_utils/model_states.json"
+		// 写json文件
+		_, err = os.Stat(model_states_json_path)
+		var file *os.File
+		if err == nil {
+			file, err = os.OpenFile(model_states_json_path,os.O_WRONLY|os.O_TRUNC,0666)
+			if err != nil {
+				log.Println(err)
+			}
+		}else {
+			file, err = os.Create(model_states_json_path)
+			if err != nil {
+				log.Println(err)
+			}
+		}
+		enc := json.NewEncoder(file)
+		err = enc.Encode(model_stat)
+		if err != nil {
+			log.Println(err)
+		}
+		err = file.Close()
+		if err != nil {
+			log.Println(err)
+		}
+		time.Sleep(time.Duration(wait_time)*time.Second);
+		c.JSON(200,gin.H{})
 	})
 	// ################################## define stylegan map #########################################
 	// 读取配置的路径5

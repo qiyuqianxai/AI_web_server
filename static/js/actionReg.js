@@ -47,8 +47,8 @@ $(function () {
     // 数据分析
     // data_analysis();
 
-    window.onbeforeunload = stop_play;
-    window.onended = stop_play;
+    window.onbeforeunload = boot_model("actionReg");
+    window.onended = stop_play();
 });
 
 
@@ -228,6 +228,7 @@ function set_click_response() {
 }
 
 function stop_play() {
+
     play_vedio = false;
     max_id = -1;
     img_id = 0;
@@ -245,6 +246,8 @@ function stop_play() {
         }
     })
     $('#show_img').attr("src", "images/cover.jpg").css({"width":"100%","height":"100%"});
+
+
 }
 
 function update_play_info() {
