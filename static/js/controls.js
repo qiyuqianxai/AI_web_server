@@ -2,7 +2,8 @@
 all_model_states = {
     "actionReg":false,
     "realesrgan":false,
-    "stylegan":false
+    "stylegan":false,
+    "stargan":false
 }
 
 function boot_model(model_name){

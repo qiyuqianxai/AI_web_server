@@ -4,6 +4,7 @@ package main
 import (
 	"awesomeProject/algorithm_utils/actionReg"
 	"awesomeProject/algorithm_utils/realesrgan"
+	"awesomeProject/algorithm_utils/stargan"
 	"awesomeProject/algorithm_utils/stylegan"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
@@ -21,6 +22,7 @@ type model_states struct {
 	ActionReg  bool `json:"actionReg"`
 	Realesrgan bool `json:"realesrgan"`
 	Stylegan   bool `json:"stylegan"`
+	Stargan    bool `json:"stargan"`
 }
 var model_stat model_states
 
@@ -34,7 +36,7 @@ func main() {
 	//r.LoadHTMLGlob("static/*.html")
 	//r.LoadHTMLFiles(static_file+"/*.html")
 
-	wait_time := 2;
+	wait_time := 5;
 
 	// ################################### define global map ############################################
 	r.GET("/index", func(c *gin.Context) {
@@ -56,6 +58,10 @@ func main() {
 
 	r.GET("/actionReg", func(c *gin.Context) {
 		c.Redirect(http.StatusFound, "/static/actionReg.html")
+	})
+
+	r.GET("/stargan", func(c *gin.Context) {
+		c.Redirect(http.StatusFound, "/static/stargan.html")
 	})
 
 	r.POST("/update_models_states", func(c *gin.Context) {
@@ -89,7 +95,7 @@ func main() {
 		if err != nil {
 			log.Println(err)
 		}
-		time.Sleep(time.Duration(wait_time)*time.Second);
+		// time.Sleep(time.Duration(wait_time)*time.Second);
 		c.JSON(200,gin.H{})
 	})
 	// ################################## define stylegan map #########################################
@@ -284,7 +290,7 @@ func main() {
 	// ################################### define action_reg map ###########################################
 
 	actionReg_config := actionReg.Laod_config()
-	msg := actionReg.Msg
+	actionReg_msg := actionReg.Msg
 	// 获取基本信息
 	r.GET("/actionReg/get_base_info", func(c *gin.Context) {
 		_, err := os.Stat(actionReg_config.Videos_pth)
@@ -313,8 +319,8 @@ func main() {
 
 	// 更新本地文件
 	r.POST("/actionReg/update_play_info", func(c *gin.Context) {
-		msg.Play_video = true
-		err := c.BindJSON(&msg)
+		actionReg_msg.Play_video = true
+		err := c.BindJSON(&actionReg_msg)
 		if err != nil {
 			return
 		}
@@ -335,7 +341,7 @@ func main() {
 			}
 		}
 		enc := json.NewEncoder(file)
-		err = enc.Encode(msg)
+		err = enc.Encode(actionReg_msg)
 		if err != nil {
 			println(err)
 		}
@@ -345,7 +351,7 @@ func main() {
 		}
 
 		// 获取max_id
-		current_video := msg.Video_name
+		current_video := actionReg_msg.Video_name
 		max_id := -1
 		_, err = os.Stat(path.Join(actionReg_config.Predict_dir, current_video))
 		if err != nil {
@@ -361,7 +367,7 @@ func main() {
 				max_id++
 			}
 		}
-		if max_id - msg.Current_id < 10{
+		if max_id - actionReg_msg.Current_id < 10{
 			time.Sleep(5);
 		}
 		c.JSON(200,gin.H{"max_id":max_id})
@@ -369,14 +375,14 @@ func main() {
 
 	// 播放结束
 	r.GET("/actionReg/play_end/", func(c *gin.Context) {
-		msg.Play_video = false
+		actionReg_msg.Play_video = false
 		file, err := os.OpenFile(actionReg_config.Message_json,os.O_WRONLY|os.O_TRUNC,0666)
 		if err != nil {
 			println(err)
 		}
 
 		enc := json.NewEncoder(file)
-		err = enc.Encode(msg)
+		err = enc.Encode(actionReg_msg)
 		if err != nil {
 			println(err)
 		}
@@ -458,50 +464,100 @@ func main() {
 	})
 
 
-	// define stargan map
-	//// blend images
-	//r.POST("/stargan/convert_img/", func(c *gin.Context) {
-	//	err := c.BindJSON(&star_gan_msg)
-	//	if err != nil {
-	//		return
-	//	}
-	//	//log.Printf("%v",&msg)
-	//
-	//	// 写json文件
-	//	_, err = os.Stat(star_gan_message)
-	//	var file *os.File
-	//	if err == nil {
-	//		file, err = os.OpenFile(star_gan_message,os.O_WRONLY|os.O_TRUNC,0666)
-	//		if err != nil {
-	//			log.Println(err)
-	//		}
-	//	}else {
-	//		file, err = os.Create(star_gan_message)
-	//		if err != nil {
-	//			log.Println(err)
-	//		}
-	//	}
-	//	enc := json.NewEncoder(file)
-	//	err = enc.Encode(star_gan_msg)
-	//	if err != nil {
-	//		log.Println(err)
-	//	}
-	//	err = file.Close()
-	//	if err != nil {
-	//		log.Println(err)
-	//	}
-	//	time.Sleep(time.Duration(3)*time.Second);
-	//	//for i:=0;i<100;i++{
-	//	//	blend_img := "/static/blend.jpg"
-	//	//	_, err :=os.Stat(blend_img)
-	//	//	if err == nil {
-	//	//		log.Println("generate dest image success!")
-	//	//		break
-	//	//	}
-	//	//	time.Sleep(time.Duration(1)*time.Second);
-	//	//}
-	//	c.JSON(200,gin.H{})
-	//})
+	// ################################### define stargan map ###########################################
+
+	stargan_config := stargan.Laod_config();
+	stargan_msg := stargan.Msg;
+	// 获取基本信息
+	r.GET("/stargan/get_base_info", func(c *gin.Context) {
+		_, err := os.Stat(stargan_config.User_img_dir)
+		var user_imgs []string
+		if err == nil {
+			f_list,err := ioutil.ReadDir(stargan_config.User_img_dir)
+			if err!=nil{
+				log.Fatal(err)
+			} else {
+				for _,f := range f_list{
+					user_imgs = append(user_imgs, f.Name())
+				}
+			}
+		}
+
+		if os.IsNotExist(err) {
+			err := os.Mkdir(stargan_config.User_img_dir, os.ModePerm)
+			if err != nil {
+				return
+			}
+		}
+		c.JSON(200,gin.H{
+			"img_list":user_imgs,
+		})
+	})
+
+	// upload image
+	r.POST("/stargan/upload_file/", func(c *gin.Context) {
+		upfile, err := c.FormFile("file")
+		if err != nil {
+			return
+		}
+		img_name := upfile.Filename
+		log.Println(img_name)
+		if strings.HasSuffix(img_name,".jpeg") || strings.HasSuffix(img_name,".jpg") || strings.HasSuffix(img_name,".png"){
+			save_pth := path.Join(stargan_config.User_img_dir,img_name)
+			_, err = os.Stat(save_pth)
+			if !os.IsNotExist(err) {
+				err := os.Remove(save_pth)
+				if err != nil {
+					return
+				}
+			}
+
+			err = c.SaveUploadedFile(upfile, save_pth)
+			if err != nil {
+				return
+			}
+			c.JSON(200,gin.H{})
+		} else{
+			c.JSON(304,gin.H{})
+		}
+	})
+
+	// blend images
+	r.POST("/stargan/blend_imgs/", func(c *gin.Context) {
+		err := c.BindJSON(&stargan_msg)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		//log.Printf("%v",&msg)
+
+		// 写json文件
+		_, err = os.Stat(stargan_config.Message_json)
+		var file *os.File
+		if err == nil {
+			file, err = os.OpenFile(stargan_config.Message_json,os.O_WRONLY|os.O_TRUNC,0666)
+			if err != nil {
+				log.Println(err)
+			}
+		}else {
+			file, err = os.Create(stargan_config.Message_json)
+			if err != nil {
+				log.Println(err)
+			}
+		}
+		enc := json.NewEncoder(file)
+		err = enc.Encode(stargan_msg)
+		if err != nil {
+			log.Println(err)
+		}
+		err = file.Close()
+		if err != nil {
+			log.Println(err)
+		}
+		time.Sleep(time.Duration(wait_time)*time.Second);
+
+		c.JSON(200,gin.H{})
+	})
 
 	err := r.Run(":43476")
 	if err != nil {
