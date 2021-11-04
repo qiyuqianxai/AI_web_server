@@ -3,9 +3,13 @@ package main
 
 import (
 	"awesomeProject/algorithm_utils/actionReg"
+	"awesomeProject/algorithm_utils/debvc"
+	"awesomeProject/algorithm_utils/deoldify"
+	"awesomeProject/algorithm_utils/firstOrder"
 	"awesomeProject/algorithm_utils/realesrgan"
 	"awesomeProject/algorithm_utils/stargan"
 	"awesomeProject/algorithm_utils/stylegan"
+	"awesomeProject/algorithm_utils/wav2lip"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
@@ -558,6 +562,536 @@ func main() {
 
 		c.JSON(200,gin.H{})
 	})
+
+	// ################################# define deoldify map ##############################################
+	deoldify_config := deoldify.Laod_config();
+	deoldify_msg := deoldify.Msg;
+	// 获取基本信息
+	r.GET("/deoldify/get_base_info", func(c *gin.Context) {
+		_, err := os.Stat(deoldify_config.User_img_dir)
+		var user_imgs []string
+		if err == nil {
+			f_list,err := ioutil.ReadDir(deoldify_config.User_img_dir)
+			if err!=nil{
+				log.Fatal(err)
+			} else {
+				for _,f := range f_list{
+					user_imgs = append(user_imgs, f.Name())
+				}
+			}
+		}
+
+		if os.IsNotExist(err) {
+			err := os.Mkdir(deoldify_config.User_img_dir, os.ModePerm)
+			if err != nil {
+				return
+			}
+		}
+		c.JSON(200,gin.H{
+			"img_list":user_imgs,
+		})
+	})
+
+	// upload image
+	r.POST("/deoldify/upload_file/", func(c *gin.Context) {
+		upfile, err := c.FormFile("file")
+		if err != nil {
+			return
+		}
+		img_name := upfile.Filename
+		log.Println(img_name)
+		if strings.HasSuffix(img_name,".jpeg") || strings.HasSuffix(img_name,".jpg") || strings.HasSuffix(img_name,".png"){
+			save_pth := path.Join(deoldify_config.User_img_dir,img_name)
+			_, err = os.Stat(save_pth)
+			if !os.IsNotExist(err) {
+				err := os.Remove(save_pth)
+				if err != nil {
+					return
+				}
+			}
+
+			err = c.SaveUploadedFile(upfile, save_pth)
+			if err != nil {
+				return
+			}
+			c.JSON(200,gin.H{})
+		} else{
+			c.JSON(304,gin.H{})
+		}
+	})
+
+	// generate images
+	r.POST("/deoldify/generate_img/", func(c *gin.Context) {
+		err := c.BindJSON(&deoldify_msg)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		//log.Printf("%v",&msg)
+
+		// 写json文件
+		_, err = os.Stat(deoldify_config.Message_json)
+		var file *os.File
+		if err == nil {
+			file, err = os.OpenFile(deoldify_config.Message_json,os.O_WRONLY|os.O_TRUNC,0666)
+			if err != nil {
+				log.Println(err)
+			}
+		}else {
+			file, err = os.Create(deoldify_config.Message_json)
+			if err != nil {
+				log.Println(err)
+			}
+		}
+		enc := json.NewEncoder(file)
+		err = enc.Encode(deoldify_msg)
+		if err != nil {
+			log.Println(err)
+		}
+		err = file.Close()
+		if err != nil {
+			log.Println(err)
+		}
+		time.Sleep(time.Duration(wait_time)*time.Second);
+
+		c.JSON(200,gin.H{})
+	})
+
+	// ######################################## define debvc ################################################
+
+	debvc_config := debvc.Laod_config();
+	debvc_msg := debvc.Msg;
+	// 获取基本信息
+	r.GET("/debvc/get_base_info", func(c *gin.Context) {
+		_, err := os.Stat(debvc_config.User_img_dir)
+		var user_imgs []string
+		var ref_imgs []string
+		if err == nil {
+			f_list,err := ioutil.ReadDir(debvc_config.User_img_dir)
+			if err!=nil{
+				log.Fatal(err)
+			} else {
+				for _,f := range f_list{
+					user_imgs = append(user_imgs, f.Name())
+				}
+			}
+		}
+
+		if os.IsNotExist(err) {
+			err := os.Mkdir(debvc_config.User_img_dir, os.ModePerm)
+			if err != nil {
+				return
+			}
+		}
+
+		if err == nil {
+			f_list,err := ioutil.ReadDir(debvc_config.Ref_img_dir)
+			if err!=nil{
+				log.Fatal(err)
+			} else {
+				for _,f := range f_list{
+					ref_imgs = append(ref_imgs, f.Name())
+				}
+			}
+		}
+
+		if os.IsNotExist(err) {
+			err := os.Mkdir(debvc_config.Ref_img_dir, os.ModePerm)
+			if err != nil {
+				return
+			}
+		}
+
+		c.JSON(200,gin.H{
+			"ref_list":ref_imgs,
+			"src_list":user_imgs,
+		})
+	})
+
+	// upload src image
+	r.POST("/debvc/upload_src/", func(c *gin.Context) {
+		upfile, err := c.FormFile("file")
+		if err != nil {
+			return
+		}
+		img_name := upfile.Filename
+		log.Println(img_name)
+		if strings.HasSuffix(img_name,".jpeg") || strings.HasSuffix(img_name,".jpg") || strings.HasSuffix(img_name,".png"){
+			save_pth := path.Join(debvc_config.User_img_dir,img_name)
+			_, err = os.Stat(save_pth)
+			if !os.IsNotExist(err) {
+				err := os.Remove(save_pth)
+				if err != nil {
+					return
+				}
+			}
+
+			err = c.SaveUploadedFile(upfile, save_pth)
+			if err != nil {
+				return
+			}
+			c.JSON(200,gin.H{})
+		} else{
+			c.JSON(304,gin.H{})
+		}
+	})
+
+	// upload ref image
+	r.POST("/debvc/upload_ref/", func(c *gin.Context) {
+		upfile, err := c.FormFile("file")
+		if err != nil {
+			return
+		}
+		img_name := upfile.Filename
+		log.Println(img_name)
+		if strings.HasSuffix(img_name,".jpeg") || strings.HasSuffix(img_name,".jpg") || strings.HasSuffix(img_name,".png"){
+			save_pth := path.Join(debvc_config.Ref_img_dir,img_name)
+			_, err = os.Stat(save_pth)
+			if !os.IsNotExist(err) {
+				err := os.Remove(save_pth)
+				if err != nil {
+					return
+				}
+			}
+
+			err = c.SaveUploadedFile(upfile, save_pth)
+			if err != nil {
+				return
+			}
+			c.JSON(200,gin.H{})
+		} else{
+			c.JSON(304,gin.H{})
+		}
+	})
+
+	// blend images
+	r.POST("/debvc/generate_img/", func(c *gin.Context) {
+		err := c.BindJSON(&debvc_msg)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		//log.Printf("%v",&msg)
+
+		// 写json文件
+		_, err = os.Stat(debvc_config.Message_json)
+		var file *os.File
+		if err == nil {
+			file, err = os.OpenFile(debvc_config.Message_json,os.O_WRONLY|os.O_TRUNC,0666)
+			if err != nil {
+				log.Println(err)
+			}
+		}else {
+			file, err = os.Create(debvc_config.Message_json)
+			if err != nil {
+				log.Println(err)
+			}
+		}
+		enc := json.NewEncoder(file)
+		err = enc.Encode(debvc_msg)
+		if err != nil {
+			log.Println(err)
+		}
+		err = file.Close()
+		if err != nil {
+			log.Println(err)
+		}
+		time.Sleep(time.Duration(wait_time)*time.Second);
+
+		c.JSON(200,gin.H{})
+	})
+
+
+
+	// ######################################## define firstOrder ################################################
+
+	firstOrder_config := firstOrder.Laod_config();
+	firstOrder_msg := firstOrder.Msg;
+	// 获取基本信息
+	r.GET("/firstOrder/get_base_info", func(c *gin.Context) {
+		_, err := os.Stat(firstOrder_config.UserImgDir)
+		var user_imgs []string
+		if err == nil {
+			f_list,err := ioutil.ReadDir(firstOrder_config.UserImgDir)
+			if err!=nil{
+				log.Fatal(err)
+			} else {
+				for _,f := range f_list{
+					user_imgs = append(user_imgs, f.Name())
+				}
+			}
+		}
+
+		if os.IsNotExist(err) {
+			err := os.Mkdir(firstOrder_config.UserImgDir, os.ModePerm)
+			if err != nil {
+				return
+			}
+		}
+
+		var user_videos []string
+		if err == nil {
+			f_list,err := ioutil.ReadDir(firstOrder_config.UserVideoDir)
+			if err!=nil{
+				log.Fatal(err)
+			} else {
+				for _,f := range f_list{
+					user_videos = append(user_videos, f.Name())
+				}
+			}
+		}
+
+		if os.IsNotExist(err) {
+			err := os.Mkdir(firstOrder_config.UserVideoDir, os.ModePerm)
+			if err != nil {
+				return
+			}
+		}
+
+		c.JSON(200,gin.H{
+			"img_list":user_imgs,
+			"video_list":user_videos,
+		})
+	})
+
+	// upload src image
+	r.POST("/firstOrder/upload_img/", func(c *gin.Context) {
+		upfile, err := c.FormFile("file")
+		if err != nil {
+			return
+		}
+		img_name := upfile.Filename
+		log.Println(img_name)
+		if strings.HasSuffix(img_name,".jpeg") || strings.HasSuffix(img_name,".jpg") || strings.HasSuffix(img_name,".png"){
+			save_pth := path.Join(firstOrder_config.UserImgDir,img_name)
+			_, err = os.Stat(save_pth)
+			if !os.IsNotExist(err) {
+				err := os.Remove(save_pth)
+				if err != nil {
+					return
+				}
+			}
+
+			err = c.SaveUploadedFile(upfile, save_pth)
+			if err != nil {
+				return
+			}
+			c.JSON(200,gin.H{})
+		} else{
+			c.JSON(304,gin.H{})
+		}
+	})
+
+	// upload ref image
+	r.POST("/firstOrder/upload_video/", func(c *gin.Context) {
+		upfile, err := c.FormFile("file")
+		if err != nil {
+			return
+		}
+		video_name := upfile.Filename
+		log.Println(video_name)
+		if strings.HasSuffix(video_name,".mp4") {
+			save_pth := path.Join(firstOrder_config.UserVideoDir,video_name)
+			_, err = os.Stat(save_pth)
+			if !os.IsNotExist(err) {
+				err := os.Remove(save_pth)
+				if err != nil {
+					return
+				}
+			}
+
+			err = c.SaveUploadedFile(upfile, save_pth)
+			if err != nil {
+				return
+			}
+			c.JSON(200,gin.H{})
+		} else{
+			c.JSON(304,gin.H{})
+		}
+	})
+
+	// blend images
+	r.POST("/firstOrder/generate_result/", func(c *gin.Context) {
+		err := c.BindJSON(&firstOrder_msg)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		//log.Printf("%v",&msg)
+
+		// 写json文件
+		_, err = os.Stat(firstOrder_config.MessageJson)
+		var file *os.File
+		if err == nil {
+			file, err = os.OpenFile(firstOrder_config.MessageJson,os.O_WRONLY|os.O_TRUNC,0666)
+			if err != nil {
+				log.Println(err)
+			}
+		}else {
+			file, err = os.Create(firstOrder_config.MessageJson)
+			if err != nil {
+				log.Println(err)
+			}
+		}
+		enc := json.NewEncoder(file)
+		err = enc.Encode(firstOrder_msg)
+		if err != nil {
+			log.Println(err)
+		}
+		err = file.Close()
+		if err != nil {
+			log.Println(err)
+		}
+		time.Sleep(time.Duration(wait_time)*time.Second);
+
+		c.JSON(200,gin.H{})
+	})
+
+
+	// ############################################## define wav2lip ##############################################
+
+	wav2lip_config := wav2lip.Laod_config();
+	wav2lip_msg := wav2lip.Msg;
+	// 获取基本信息
+	r.GET("/wav2lip/get_base_info", func(c *gin.Context) {
+		_, err := os.Stat(wav2lip_config.UserImgDir)
+		var user_imgs []string
+		if err == nil {
+			f_list,err := ioutil.ReadDir(wav2lip_config.UserImgDir)
+			if err!=nil{
+				log.Fatal(err)
+			} else {
+				for _,f := range f_list{
+					user_imgs = append(user_imgs, f.Name())
+				}
+			}
+		}
+
+		if os.IsNotExist(err) {
+			err := os.Mkdir(wav2lip_config.UserImgDir, os.ModePerm)
+			if err != nil {
+				return
+			}
+		}
+
+		var user_audios []string
+		if err == nil {
+			f_list,err := ioutil.ReadDir(wav2lip_config.UserAudioDir)
+			if err!=nil{
+				log.Fatal(err)
+			} else {
+				for _,f := range f_list{
+					user_audios = append(user_audios, f.Name())
+				}
+			}
+		}
+
+		if os.IsNotExist(err) {
+			err := os.Mkdir(wav2lip_config.UserAudioDir, os.ModePerm)
+			if err != nil {
+				return
+			}
+		}
+
+		c.JSON(200,gin.H{
+			"img_list":user_imgs,
+			"audio_list":user_audios,
+		})
+	})
+
+	// upload src image
+	r.POST("/wav2lip/upload_img/", func(c *gin.Context) {
+		upfile, err := c.FormFile("file")
+		if err != nil {
+			return
+		}
+		img_name := upfile.Filename
+		log.Println(img_name)
+		if strings.HasSuffix(img_name,".jpeg") || strings.HasSuffix(img_name,".jpg") || strings.HasSuffix(img_name,".png"){
+			save_pth := path.Join(wav2lip_config.UserImgDir,img_name)
+			_, err = os.Stat(save_pth)
+			if !os.IsNotExist(err) {
+				err := os.Remove(save_pth)
+				if err != nil {
+					return
+				}
+			}
+
+			err = c.SaveUploadedFile(upfile, save_pth)
+			if err != nil {
+				return
+			}
+			c.JSON(200,gin.H{})
+		} else{
+			c.JSON(304,gin.H{})
+		}
+	})
+
+	// upload
+	r.POST("/wav2lip/upload_audio/", func(c *gin.Context) {
+		upfile, err := c.FormFile("file")
+		if err != nil {
+			return
+		}
+		img_name := upfile.Filename
+		log.Println(img_name)
+		if strings.HasSuffix(img_name,".mp3") {
+			save_pth := path.Join(wav2lip_config.UserAudioDir,img_name)
+			_, err = os.Stat(save_pth)
+			if !os.IsNotExist(err) {
+				err := os.Remove(save_pth)
+				if err != nil {
+					return
+				}
+			}
+
+			err = c.SaveUploadedFile(upfile, save_pth)
+			if err != nil {
+				return
+			}
+			c.JSON(200,gin.H{})
+		} else{
+			c.JSON(304,gin.H{})
+		}
+	})
+
+	// blend images
+	r.POST("/wav2lip/generate_result/", func(c *gin.Context) {
+		err := c.BindJSON(&wav2lip_msg)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		//log.Printf("%v",&msg)
+
+		// 写json文件
+		_, err = os.Stat(wav2lip_config.MessageJson)
+		var file *os.File
+		if err == nil {
+			file, err = os.OpenFile(wav2lip_config.MessageJson,os.O_WRONLY|os.O_TRUNC,0666)
+			if err != nil {
+				log.Println(err)
+			}
+		}else {
+			file, err = os.Create(wav2lip_config.MessageJson)
+			if err != nil {
+				log.Println(err)
+			}
+		}
+		enc := json.NewEncoder(file)
+		err = enc.Encode(wav2lip_msg)
+		if err != nil {
+			log.Println(err)
+		}
+		err = file.Close()
+		if err != nil {
+			log.Println(err)
+		}
+		time.Sleep(time.Duration(wait_time)*time.Second);
+
+		c.JSON(200,gin.H{})
+	})
+
 
 	err := r.Run(":43476")
 	if err != nil {
