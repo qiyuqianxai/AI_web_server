@@ -1,105 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<title>AI factory</title>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="description" content="OneTech shop project">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Cache-Control" content="no-cache">
-<meta http-equiv="Expires" content="0">
-<link rel="stylesheet" type="text/css" href="styles/bootstrap4/bootstrap.min.css">
-<link href="plugins/fontawesome-free-5.0.1/css/fontawesome-all.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/owl.carousel.css">
-<link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/owl.theme.default.css">
-<link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/animate.css">
-<link rel="stylesheet" type="text/css" href="styles/product_styles.css">
-<link rel="stylesheet" type="text/css" href="styles/product_responsive.css">
-<link rel="shortcut icon" type="image/x-icon" href="images/logo.ico" media="screen" />
-</head>
+	<head>
+		<title>AI factory</title>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="description" content="OneTech shop project">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-Control" content="no-cache">
+		<meta http-equiv="Expires" content="0">
+		<link rel="stylesheet" type="text/css" href="styles/bootstrap4/bootstrap.min.css">
+		<link href="plugins/fontawesome-free-5.0.1/css/fontawesome-all.css" rel="stylesheet" type="text/css">
+		<link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/owl.carousel.css">
+		<link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/owl.theme.default.css">
+		<link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/animate.css">
+		<link rel="stylesheet" type="text/css" href="styles/product_styles.css">
+		<link rel="stylesheet" type="text/css" href="styles/product_responsive.css">
+		<link rel="shortcut icon" type="image/x-icon" href="images/logo.ico" media="screen" />
+		<script src="js/jquery-3.3.1.min.js"></script>
+		<script src="styles/bootstrap4/popper.js"></script>
+		<script src="styles/bootstrap4/bootstrap.min.js"></script>
+		<script src="plugins/greensock/TweenMax.min.js"></script>
+		<script src="plugins/greensock/TimelineMax.min.js"></script>
+		<script src="plugins/scrollmagic/ScrollMagic.min.js"></script>
+		<script src="plugins/greensock/animation.gsap.min.js"></script>
+		<script src="plugins/greensock/ScrollToPlugin.min.js"></script>
+		<script src="plugins/OwlCarousel2-2.2.1/owl.carousel.js"></script>
+		<script src="plugins/easing/easing.js"></script>
+		<script src="js/highcharts.js"></script>
+		<script src="js/controls.js"></script>
+		<script>
+			boot_model("home");
+		</script>
+	</head>
 
-<body>
+	<style type="text/css">
+        .div1,.div2{
+            transition: All 0.2s ease-in-out;
+            -webkit-transition: All 0.2s ease-in-out;
+            -moz-transition: All 0.2s ease-in-out;
+            -o-transition: All 0.2s ease-in-out;
+        }
 
-<div class="super_container">
-	
-	<!-- Header -->
-	
-	<header class="header">
+        .div1:hover {
+            transform: scale(1.1);
+            -webkit-transform: scale(1.1);
+            -moz-transform: scale(1.1);
+            -o-transform: scale(1.1);
+            -ms-transform: scale(1.1);
+        }
+        .picbox{
+	        float:left;
+	        margin:auto;
+	        margin:0px;
+	        position:relative;
+	        /*父元素里面包含需要变换的内容，所以设置为3D变换*/
+	        -webkit-transform-style: preserve-3d;
+	        -moz-transform-style: preserve-3d;
+	        -ms-transform-style: preserve-3d;
+	        transform-style: preserve-3d;
+	        transition:1.5s;
+	        /*设置在1.5s内完成变换*/
+	    }
+	    .picbox:hover{
+	        transform:rotateX(180deg);
+	    }
+	    .box{
+	        position:absolute;
+	        margin-top: 0%;
+	        margin-left: 0%;
+	     }
+	    .back{
+	        -webkit-transform: rotateY(180deg);
+	        -ms-transform: rotateY(180deg);
+	        -o-transform: rotateY(180deg);
+	        transform: rotateY(180deg);
+	    }
+	</style>
 
-		<!-- Top Bar -->
+	<body style="background: #f3faff">
+		<div class="super_container">
+			<!-- Header -->
+			<header class="header">
+				<!-- Top Bar -->
+				<div class="top_bar">
+					<div class="container">
+						<div class="row">
+							<div class="col d-flex flex-row">
+								<div class="top_bar_contact_item">
+									<div class="top_bar_icon">
+										<img src="images/phone.png" alt="">
+									</div>+19115621964
+								</div>
 
-		<div class="top_bar">
-			<div class="container">
-				<div class="row">
-					<div class="col d-flex flex-row">
-						<div class="top_bar_contact_item"><div class="top_bar_icon"><img src="images/phone.png" alt=""></div>+19115621964</div>
-						<div class="top_bar_contact_item"><div class="top_bar_icon"><img src="images/mail.png" alt=""></div><a href="mailto:pengyubo@126.com">pengyubo@126.com</a></div>
-						<div class="top_bar_content ml-auto">
+								<div class="top_bar_contact_item">
+									<div class="top_bar_icon">
+										<img src="images/mail.png" alt="">
+									</div>
+									<a href="mailto:pengyubo@126.com">pengyubo@126.com</a>
+								</div>
 
-							<div class="top_bar_user">
-								<div class="user_icon"><img src="images/user.svg" alt=""></div>
-								<div><a href="#">Register</a></div>
-								<div><a href="#">Sign in</a></div>
+								<div class="top_bar_content ml-auto">
+									<div class="top_bar_user">
+										<div class="user_icon">
+											<img src="images/user.svg" alt="">
+										</div>
+										<div><a href="#">Register</a></div>
+										<div><a href="#">Sign in</a></div>
+									</div>
+								</div>
 							</div>
 						</div>
-					</div>
+					</div>		
 				</div>
-			</div>		
+			</header>
 		</div>
 
+		<div style="display:inline-flex; width: 900px; height: 160px; margin-top: 6%; margin-left: 20%; font-size: 20px;">
+			<div class="div1" style="width:100%; height:100%; padding:10px; border:1px solid #ffcc00; background: url(images/action.jpg); border-radius: 10px; opacity:0.9;">
+				<a href="actionReg.html" style="color: #1b1e21">AI - Action Recognition</a>
+			</div>
 
-		<!-- Header Main -->
-		<!-- Menu -->
+			<div class="div1" style="width:100%; height:100%; margin-left:2%; padding:10px; border:1px solid #ffcc00; background:url(images/action_1.png); border-radius: 10px;">
+				<a href="realesrgan.html" style="color: #1b1e21">AI - Images Amplify</a>
+			</div>
 
-	</header>
+			<div class="div1" style="width: 100%; height: 100%; margin-left:2%; padding:10px; border:1px solid #ffcc00; background:url(images/action_2.png); border-radius: 10px;">
+				<a href="stylegan.html" style="color: #1b1e21">AI - Face Modify</a>
+			</div>
+		</div>
+		<div style="display:inline-flex; width: 600px; height: 162px; margin-top: 1%; margin-left: 30%;  font-size: 18px;">
+			<div class="div1" style="width:100%; height:100%; padding:10px; border:1px solid #ffcc00; background:url(images/action_3.png);background-position: center; border-radius: 10px;">
+				<a href="stargan.html" style="color: white">AI - Face Merge</a>
+			</div>
+			<div class="div1" style="width:100%; height:100%; margin-left:3%; padding:10px; border:1px solid #ffcc00; background:url(images/action_4.png); border-radius: 10px;">
+				<a href="colorImg.html" style="color: white">AI - Color Image</a>
+			</div>
+		</div>
+	</body>
 
-	<!-- Single Product -->
-
-	<div class="main_area" style="margin-top: 2%;margin-bottom: 5%;width: 100%;position: center">
-		<div><a href="actionReg.html">AI - Action Recognition</a></div>
-		<div><a href="realesrgan.html">AI - Images Amplify</a></div>
-		<div><a href="stylegan.html">AI - Face Modify</a></div>
-		<div><a href="stargan.html">AI - Face Merge</a></div>
-
-	</div>
+</html>
 
 	<!-- Copyright -->
 
-	<div class="copyright">
+	<div class="copyright" style="position: fixed; bottom: 0;">
 		<div class="container">
 			<div class="row">
 				<div class="col">
 					
 					<div class="copyright_container d-flex flex-sm-row flex-column align-items-center justify-content-start">
-						<div class="copyright_content"><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-</div>
-
+						<div class="copyright_content" style="margin-left: 28%">
+							<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+							Copyright &copy;
+							<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with
+							<i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+						<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-
-</div>
-<script src="js/jquery-3.3.1.min.js"></script>
-<script src="styles/bootstrap4/popper.js"></script>
-<script src="styles/bootstrap4/bootstrap.min.js"></script>
-<script src="plugins/greensock/TweenMax.min.js"></script>
-<script src="plugins/greensock/TimelineMax.min.js"></script>
-<script src="plugins/scrollmagic/ScrollMagic.min.js"></script>
-<script src="plugins/greensock/animation.gsap.min.js"></script>
-<script src="plugins/greensock/ScrollToPlugin.min.js"></script>
-<script src="plugins/OwlCarousel2-2.2.1/owl.carousel.js"></script>
-<script src="plugins/easing/easing.js"></script>
-<script src="js/highcharts.js"></script>
-<script src="js/controls.js"></script>
-<script>
-	boot_model("home");
-</script>
-</body>
-
-
-</html>

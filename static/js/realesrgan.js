@@ -11,7 +11,7 @@ fake_imgs_dir = "algorithm/realesrgan/result_imgs/" //生成图片地址
 
 $(function() {
 
-    window.onbeforeunload = boot_model("realesrgan");
+    window.onbeforeunload = boot_model(["realesrgan"]);
 
 
     var html_str = "";

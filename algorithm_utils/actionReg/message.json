@@ -1,1 +1,1 @@
-{"id":0,"Play_video":false,"video_name":"wushu.mp4","req_face_detect":true,"req_body_detect":true,"req_body_keypoints":true,"req_face_keypoints":true,"req_expression_reg":true,"req_action_reg":true,"person_track":false,"req_attention_reg":true}
+{"id":0,"Play_video":false,"video_name":"wushu.mp4","req_face_detect":true,"req_body_detect":true,"req_body_keypoints":true,"req_face_keypoints":true,"req_expression_reg":true,"req_action_reg":true,"person_track":true,"req_attention_reg":true}

@@ -3,8 +3,7 @@ package main
 
 import (
 	"awesomeProject/algorithm_utils/actionReg"
-	"awesomeProject/algorithm_utils/debvc"
-	"awesomeProject/algorithm_utils/deoldify"
+	"awesomeProject/algorithm_utils/colorImage"
 	"awesomeProject/algorithm_utils/firstOrder"
 	"awesomeProject/algorithm_utils/realesrgan"
 	"awesomeProject/algorithm_utils/stargan"
@@ -27,6 +26,10 @@ type model_states struct {
 	Realesrgan bool `json:"realesrgan"`
 	Stylegan   bool `json:"stylegan"`
 	Stargan    bool `json:"stargan"`
+	Debvc      bool `json:"debvc"`
+	Deoldify   bool `json:"deoldify"`
+	FirstOrder bool `json:"firstOrder"`
+	Wav2lip    bool `json:"wav2lip"`
 }
 var model_stat model_states
 
@@ -66,6 +69,10 @@ func main() {
 
 	r.GET("/stargan", func(c *gin.Context) {
 		c.Redirect(http.StatusFound, "/static/stargan.html")
+	})
+
+	r.GET("/colorImage", func(c *gin.Context) {
+		c.Redirect(http.StatusFound, "/static/colorImg.html")
 	})
 
 	r.POST("/update_models_states", func(c *gin.Context) {
@@ -563,111 +570,17 @@ func main() {
 		c.JSON(200,gin.H{})
 	})
 
-	// ################################# define deoldify map ##############################################
-	deoldify_config := deoldify.Laod_config();
-	deoldify_msg := deoldify.Msg;
+	// ################################# define colorImage map ##############################################
+	colorImage_config := colorImage.Laod_config();
+	colorImage_msg := colorImage.Msg;
 	// 获取基本信息
-	r.GET("/deoldify/get_base_info", func(c *gin.Context) {
-		_, err := os.Stat(deoldify_config.User_img_dir)
-		var user_imgs []string
-		if err == nil {
-			f_list,err := ioutil.ReadDir(deoldify_config.User_img_dir)
-			if err!=nil{
-				log.Fatal(err)
-			} else {
-				for _,f := range f_list{
-					user_imgs = append(user_imgs, f.Name())
-				}
-			}
-		}
-
-		if os.IsNotExist(err) {
-			err := os.Mkdir(deoldify_config.User_img_dir, os.ModePerm)
-			if err != nil {
-				return
-			}
-		}
-		c.JSON(200,gin.H{
-			"img_list":user_imgs,
-		})
-	})
-
-	// upload image
-	r.POST("/deoldify/upload_file/", func(c *gin.Context) {
-		upfile, err := c.FormFile("file")
-		if err != nil {
-			return
-		}
-		img_name := upfile.Filename
-		log.Println(img_name)
-		if strings.HasSuffix(img_name,".jpeg") || strings.HasSuffix(img_name,".jpg") || strings.HasSuffix(img_name,".png"){
-			save_pth := path.Join(deoldify_config.User_img_dir,img_name)
-			_, err = os.Stat(save_pth)
-			if !os.IsNotExist(err) {
-				err := os.Remove(save_pth)
-				if err != nil {
-					return
-				}
-			}
-
-			err = c.SaveUploadedFile(upfile, save_pth)
-			if err != nil {
-				return
-			}
-			c.JSON(200,gin.H{})
-		} else{
-			c.JSON(304,gin.H{})
-		}
-	})
-
-	// generate images
-	r.POST("/deoldify/generate_img/", func(c *gin.Context) {
-		err := c.BindJSON(&deoldify_msg)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-		//log.Printf("%v",&msg)
-
-		// 写json文件
-		_, err = os.Stat(deoldify_config.Message_json)
-		var file *os.File
-		if err == nil {
-			file, err = os.OpenFile(deoldify_config.Message_json,os.O_WRONLY|os.O_TRUNC,0666)
-			if err != nil {
-				log.Println(err)
-			}
-		}else {
-			file, err = os.Create(deoldify_config.Message_json)
-			if err != nil {
-				log.Println(err)
-			}
-		}
-		enc := json.NewEncoder(file)
-		err = enc.Encode(deoldify_msg)
-		if err != nil {
-			log.Println(err)
-		}
-		err = file.Close()
-		if err != nil {
-			log.Println(err)
-		}
-		time.Sleep(time.Duration(wait_time)*time.Second);
-
-		c.JSON(200,gin.H{})
-	})
-
-	// ######################################## define debvc ################################################
-
-	debvc_config := debvc.Laod_config();
-	debvc_msg := debvc.Msg;
-	// 获取基本信息
-	r.GET("/debvc/get_base_info", func(c *gin.Context) {
-		_, err := os.Stat(debvc_config.User_img_dir)
+	r.GET("/colorImage/get_base_info", func(c *gin.Context) {
+		_, err := os.Stat(colorImage_config.User_img_dir)
 		var user_imgs []string
 		var ref_imgs []string
+
 		if err == nil {
-			f_list,err := ioutil.ReadDir(debvc_config.User_img_dir)
+			f_list,err := ioutil.ReadDir(colorImage_config.User_img_dir)
 			if err!=nil{
 				log.Fatal(err)
 			} else {
@@ -678,14 +591,14 @@ func main() {
 		}
 
 		if os.IsNotExist(err) {
-			err := os.Mkdir(debvc_config.User_img_dir, os.ModePerm)
+			err := os.Mkdir(colorImage_config.User_img_dir, os.ModePerm)
 			if err != nil {
 				return
 			}
 		}
 
 		if err == nil {
-			f_list,err := ioutil.ReadDir(debvc_config.Ref_img_dir)
+			f_list,err := ioutil.ReadDir(colorImage_config.Ref_img_dir)
 			if err!=nil{
 				log.Fatal(err)
 			} else {
@@ -696,7 +609,7 @@ func main() {
 		}
 
 		if os.IsNotExist(err) {
-			err := os.Mkdir(debvc_config.Ref_img_dir, os.ModePerm)
+			err := os.Mkdir(colorImage_config.Ref_img_dir, os.ModePerm)
 			if err != nil {
 				return
 			}
@@ -709,7 +622,7 @@ func main() {
 	})
 
 	// upload src image
-	r.POST("/debvc/upload_src/", func(c *gin.Context) {
+	r.POST("/colorImage/upload_src", func(c *gin.Context) {
 		upfile, err := c.FormFile("file")
 		if err != nil {
 			return
@@ -717,7 +630,7 @@ func main() {
 		img_name := upfile.Filename
 		log.Println(img_name)
 		if strings.HasSuffix(img_name,".jpeg") || strings.HasSuffix(img_name,".jpg") || strings.HasSuffix(img_name,".png"){
-			save_pth := path.Join(debvc_config.User_img_dir,img_name)
+			save_pth := path.Join(colorImage_config.User_img_dir,img_name)
 			_, err = os.Stat(save_pth)
 			if !os.IsNotExist(err) {
 				err := os.Remove(save_pth)
@@ -737,7 +650,7 @@ func main() {
 	})
 
 	// upload ref image
-	r.POST("/debvc/upload_ref/", func(c *gin.Context) {
+	r.POST("/colorImage/upload_ref", func(c *gin.Context) {
 		upfile, err := c.FormFile("file")
 		if err != nil {
 			return
@@ -745,7 +658,7 @@ func main() {
 		img_name := upfile.Filename
 		log.Println(img_name)
 		if strings.HasSuffix(img_name,".jpeg") || strings.HasSuffix(img_name,".jpg") || strings.HasSuffix(img_name,".png"){
-			save_pth := path.Join(debvc_config.Ref_img_dir,img_name)
+			save_pth := path.Join(colorImage_config.Ref_img_dir,img_name)
 			_, err = os.Stat(save_pth)
 			if !os.IsNotExist(err) {
 				err := os.Remove(save_pth)
@@ -765,8 +678,8 @@ func main() {
 	})
 
 	// blend images
-	r.POST("/debvc/generate_img/", func(c *gin.Context) {
-		err := c.BindJSON(&debvc_msg)
+	r.POST("/colorImage/generate_img/", func(c *gin.Context) {
+		err := c.BindJSON(&colorImage_msg)
 		if err != nil {
 			log.Println(err)
 			return
@@ -774,21 +687,21 @@ func main() {
 		//log.Printf("%v",&msg)
 
 		// 写json文件
-		_, err = os.Stat(debvc_config.Message_json)
+		_, err = os.Stat(colorImage_config.Message_json)
 		var file *os.File
 		if err == nil {
-			file, err = os.OpenFile(debvc_config.Message_json,os.O_WRONLY|os.O_TRUNC,0666)
+			file, err = os.OpenFile(colorImage_config.Message_json,os.O_WRONLY|os.O_TRUNC,0666)
 			if err != nil {
 				log.Println(err)
 			}
 		}else {
-			file, err = os.Create(debvc_config.Message_json)
+			file, err = os.Create(colorImage_config.Message_json)
 			if err != nil {
 				log.Println(err)
 			}
 		}
 		enc := json.NewEncoder(file)
-		err = enc.Encode(debvc_msg)
+		err = enc.Encode(colorImage_msg)
 		if err != nil {
 			log.Println(err)
 		}

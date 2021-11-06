@@ -3,12 +3,17 @@ all_model_states = {
     "actionReg":false,
     "realesrgan":false,
     "stylegan":false,
-    "stargan":false
+    "stargan":false,
+    "wav2lip": false,
+    "deoldify": false,
+    "debvc":false,
+    "firstOrder": false,
 }
 
-function boot_model(model_name){
+
+function boot_model(model_names){
     $.each(all_model_states,function (key,val) {
-        all_model_states[key] = key === model_name;
+        all_model_states[key] = model_names.indexOf(key) > -1;
     })
     update_models_states();
 }

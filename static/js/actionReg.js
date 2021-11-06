@@ -47,7 +47,7 @@ $(function () {
     // 数据分析
     // data_analysis();
 
-    window.onbeforeunload = boot_model("actionReg");
+    window.onbeforeunload = boot_model(["actionReg"]);
     window.onended = stop_play();
 });
 

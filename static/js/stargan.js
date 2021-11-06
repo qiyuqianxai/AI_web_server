@@ -14,7 +14,7 @@ result_imgs_dir = "algorithm/stargan/blend_imgs/"
 
 $(function () {
 
-    window.onbeforeunload = boot_model("stargan");
+    window.onbeforeunload = boot_model(["stargan"]);
 
     // 加载按键信息
     set_click_response();

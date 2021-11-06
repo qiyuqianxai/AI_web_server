@@ -1,4 +1,4 @@
-package debvc
+package colorImage
 
 type config struct {
 	Ref_img_dir  string `json:"ref_img_dir"`
@@ -17,9 +17,9 @@ type message struct {
 var Msg message
 
 func Laod_config() config {
-	config_file.User_img_dir = "static/algorithm/debvc/user_imgs"
-	config_file.Ref_img_dir = "static/algorithm/debvc/ref_imgs"
-	config_file.Res_img_dir = "static/algorithm/debvc/res_imgs"
-	config_file.Message_json = "algorithm_utils/debvc/message.json"
+	config_file.User_img_dir = "static/algorithm/colorImage/user_imgs"
+	config_file.Ref_img_dir = "static/algorithm/colorImage/ref_imgs"
+	config_file.Res_img_dir = "static/algorithm/colorImage/res_imgs"
+	config_file.Message_json = "algorithm_utils/colorImage/message.json"
 	return config_file
 }

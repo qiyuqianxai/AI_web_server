@@ -34,7 +34,7 @@ fake_imgs_dir = "algorithm/stylegan/fake_imgs/"
 
 $(function () {
 
-    window.onbeforeunload = boot_model("stylegan");
+    window.onbeforeunload = boot_model(["stylegan"]);
 
     var html_str = "";
     $.each(direction_val,function (key,val){
