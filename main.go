@@ -2,13 +2,13 @@
 package main
 
 import (
+	"awesomeProject/algorithm_utils/MakeItTalk"
 	"awesomeProject/algorithm_utils/actionReg"
 	"awesomeProject/algorithm_utils/colorImage"
 	"awesomeProject/algorithm_utils/firstOrder"
 	"awesomeProject/algorithm_utils/realesrgan"
 	"awesomeProject/algorithm_utils/stargan"
 	"awesomeProject/algorithm_utils/stylegan"
-	"awesomeProject/algorithm_utils/wav2lip"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
@@ -29,7 +29,7 @@ type model_states struct {
 	Debvc      bool `json:"debvc"`
 	Deoldify   bool `json:"deoldify"`
 	FirstOrder bool `json:"firstOrder"`
-	Wav2lip    bool `json:"wav2lip"`
+	MakeItTalk   bool `json:"MakeItTalk"`
 }
 var model_stat model_states
 
@@ -73,6 +73,10 @@ func main() {
 
 	r.GET("/colorImage", func(c *gin.Context) {
 		c.Redirect(http.StatusFound, "/static/colorImg.html")
+	})
+
+	r.GET("/activateImg", func(c *gin.Context) {
+		c.Redirect(http.StatusFound, "/static/activateImg.html")
 	})
 
 	r.POST("/update_models_states", func(c *gin.Context) {
@@ -228,8 +232,29 @@ func main() {
 				return
 			}
 		}
+
+		var user_videos []string
+		if err == nil {
+			f_list,err := ioutil.ReadDir(realesregan_config.User_video_dir)
+			if err!=nil{
+				log.Fatal(err)
+			} else {
+				for _,f := range f_list{
+					user_videos = append(user_videos, f.Name())
+				}
+			}
+		}
+
+		if os.IsNotExist(err) {
+			err := os.Mkdir(realesregan_config.User_video_dir, os.ModePerm)
+			if err != nil {
+				return
+			}
+		}
+
 		c.JSON(200,gin.H{
 			"img_list":user_imgs,
+			"video_list":user_videos,
 		})
 	})
 
@@ -243,6 +268,33 @@ func main() {
 		log.Println(img_name)
 		if strings.HasSuffix(img_name,".jpeg") || strings.HasSuffix(img_name,".jpg") || strings.HasSuffix(img_name,".png"){
 			save_pth := path.Join(realesregan_config.User_img_dir,img_name)
+			_, err = os.Stat(save_pth)
+			if !os.IsNotExist(err) {
+				err := os.Remove(save_pth)
+				if err != nil {
+					return
+				}
+			}
+
+			err = c.SaveUploadedFile(upfile, save_pth)
+			if err != nil {
+				return
+			}
+			c.JSON(200,gin.H{})
+		} else{
+			c.JSON(304,gin.H{})
+		}
+	})
+
+	// upload videos
+	r.POST("/realesran/upload_video/", func(c *gin.Context) {
+		upfile, err := c.FormFile("file")
+		if err != nil {
+			return
+		}
+		video_name := upfile.Filename
+		if strings.HasSuffix(video_name,".mp4") {
+			save_pth := path.Join(realesregan_config.User_video_dir,video_name)
 			_, err = os.Stat(save_pth)
 			if !os.IsNotExist(err) {
 				err := os.Remove(save_pth)
@@ -861,16 +913,16 @@ func main() {
 	})
 
 
-	// ############################################## define wav2lip ##############################################
+	// ############################################## define MakeItTalk ##############################################
 
-	wav2lip_config := wav2lip.Laod_config();
-	wav2lip_msg := wav2lip.Msg;
+	MakeItTalk_config := MakeItTalk.Laod_config();
+	MakeItTalk_msg := MakeItTalk.Msg;
 	// 获取基本信息
-	r.GET("/wav2lip/get_base_info", func(c *gin.Context) {
-		_, err := os.Stat(wav2lip_config.UserImgDir)
+	r.GET("/MakeItTalk/get_base_info/", func(c *gin.Context) {
+		_, err := os.Stat(MakeItTalk_config.UserImgDir)
 		var user_imgs []string
 		if err == nil {
-			f_list,err := ioutil.ReadDir(wav2lip_config.UserImgDir)
+			f_list,err := ioutil.ReadDir(MakeItTalk_config.UserImgDir)
 			if err!=nil{
 				log.Fatal(err)
 			} else {
@@ -881,7 +933,7 @@ func main() {
 		}
 
 		if os.IsNotExist(err) {
-			err := os.Mkdir(wav2lip_config.UserImgDir, os.ModePerm)
+			err := os.Mkdir(MakeItTalk_config.UserImgDir, os.ModePerm)
 			if err != nil {
 				return
 			}
@@ -889,7 +941,7 @@ func main() {
 
 		var user_audios []string
 		if err == nil {
-			f_list,err := ioutil.ReadDir(wav2lip_config.UserAudioDir)
+			f_list,err := ioutil.ReadDir(MakeItTalk_config.UserAudioDir)
 			if err!=nil{
 				log.Fatal(err)
 			} else {
@@ -900,7 +952,7 @@ func main() {
 		}
 
 		if os.IsNotExist(err) {
-			err := os.Mkdir(wav2lip_config.UserAudioDir, os.ModePerm)
+			err := os.Mkdir(MakeItTalk_config.UserAudioDir, os.ModePerm)
 			if err != nil {
 				return
 			}
@@ -913,7 +965,7 @@ func main() {
 	})
 
 	// upload src image
-	r.POST("/wav2lip/upload_img/", func(c *gin.Context) {
+	r.POST("/MakeItTalk/upload_img/", func(c *gin.Context) {
 		upfile, err := c.FormFile("file")
 		if err != nil {
 			return
@@ -921,7 +973,7 @@ func main() {
 		img_name := upfile.Filename
 		log.Println(img_name)
 		if strings.HasSuffix(img_name,".jpeg") || strings.HasSuffix(img_name,".jpg") || strings.HasSuffix(img_name,".png"){
-			save_pth := path.Join(wav2lip_config.UserImgDir,img_name)
+			save_pth := path.Join(MakeItTalk_config.UserImgDir,img_name)
 			_, err = os.Stat(save_pth)
 			if !os.IsNotExist(err) {
 				err := os.Remove(save_pth)
@@ -941,7 +993,7 @@ func main() {
 	})
 
 	// upload
-	r.POST("/wav2lip/upload_audio/", func(c *gin.Context) {
+	r.POST("/MakeItTalk/upload_audio/", func(c *gin.Context) {
 		upfile, err := c.FormFile("file")
 		if err != nil {
 			return
@@ -949,7 +1001,7 @@ func main() {
 		img_name := upfile.Filename
 		log.Println(img_name)
 		if strings.HasSuffix(img_name,".mp3") {
-			save_pth := path.Join(wav2lip_config.UserAudioDir,img_name)
+			save_pth := path.Join(MakeItTalk_config.UserAudioDir,img_name)
 			_, err = os.Stat(save_pth)
 			if !os.IsNotExist(err) {
 				err := os.Remove(save_pth)
@@ -969,8 +1021,8 @@ func main() {
 	})
 
 	// blend images
-	r.POST("/wav2lip/generate_result/", func(c *gin.Context) {
-		err := c.BindJSON(&wav2lip_msg)
+	r.POST("/MakeItTalk/generate_result/", func(c *gin.Context) {
+		err := c.BindJSON(&MakeItTalk_msg)
 		if err != nil {
 			log.Println(err)
 			return
@@ -978,21 +1030,21 @@ func main() {
 		//log.Printf("%v",&msg)
 
 		// 写json文件
-		_, err = os.Stat(wav2lip_config.MessageJson)
+		_, err = os.Stat(MakeItTalk_config.MessageJson)
 		var file *os.File
 		if err == nil {
-			file, err = os.OpenFile(wav2lip_config.MessageJson,os.O_WRONLY|os.O_TRUNC,0666)
+			file, err = os.OpenFile(MakeItTalk_config.MessageJson,os.O_WRONLY|os.O_TRUNC,0666)
 			if err != nil {
 				log.Println(err)
 			}
 		}else {
-			file, err = os.Create(wav2lip_config.MessageJson)
+			file, err = os.Create(MakeItTalk_config.MessageJson)
 			if err != nil {
 				log.Println(err)
 			}
 		}
 		enc := json.NewEncoder(file)
-		err = enc.Encode(wav2lip_msg)
+		err = enc.Encode(MakeItTalk_msg)
 		if err != nil {
 			log.Println(err)
 		}

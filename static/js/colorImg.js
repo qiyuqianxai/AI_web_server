@@ -3,8 +3,10 @@ src_image = ""
 ref_image = ""
 
 params = {
-    "user_img": "",
-    "ref_img": "",
+    "user_img":"77d6aa752a15d04427f1ac4b6e4864aa.jpeg",
+    "ref_img":"",
+    "render_factor": 20,
+    "artistic": true
 }
 
 //
@@ -126,7 +128,9 @@ function set_click_response() {
 function blend_img() {
     params["user_img"] = src_image;
     params["ref_img"] = ref_image;
-    params['model'] = $('#user_model').find("option:selected").val()
+    // params['model'] = $('#user_model').find("option:selected").val()
+    params['render_factor'] = parseInt($("#render_factor").val())
+    params['artistic'] = parseInt($("#artistic").val()) === 1
     var model = $('#user_model').find("option:selected").val();
     boot_model([model]);
     var post_data = JSON.stringify(params);
@@ -140,7 +144,7 @@ function blend_img() {
             if(model === "debvc")
                 blend_img = result_imgs_dir + src_image.replace(".jpeg", "").replace(".jpg", "").replace(".png", "") + "_" + ref_image.replace(".jpeg", "").replace(".jpg", "").replace(".png", "") + '.png'
             else
-                blend_img = result_imgs_dir + "deoldify_"+ src_image;
+                blend_img = result_imgs_dir + "deoldify_"+$("#render_factor").val().toString()+$("#artistic").val().toString()+"_"+ src_image;
             var img = new Image()
                 // 改变图片的src
             img.src = blend_img

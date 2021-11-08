@@ -10,8 +10,10 @@ var config_file config
 
 // send gan-nn param
 type message struct {
-	User_img   string `json:"user_img"`
-	Ref_img    string `json:"ref_img"`
+	UserImg      string `json:"user_img"`
+	RefImg       string `json:"ref_img"`
+	RenderFactor int    `json:"render_factor"`
+	Artistic     bool   `json:"artistic"`
 }
 
 var Msg message

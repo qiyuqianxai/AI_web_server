@@ -1,13 +1,19 @@
 // current src image
 current_image = ""
-
+current_video = ""
 direction_val = {
-
+    "user_img":"2.jpg",
+    "face_enhance":true,
+    "model":"RealESRGAN_x2plus.pth"
 }
 
 user_imgs_dir = "algorithm/realesrgan/user_imgs/" //上传图片地址
 
 fake_imgs_dir = "algorithm/realesrgan/result_imgs/" //生成图片地址
+
+user_video_dir = "algorithm/realesrgan/user_videos/"
+
+res_video_dir = "algorithm/realesrgan/res_videos/"
 
 $(function() {
 
@@ -15,20 +21,7 @@ $(function() {
 
 
     var html_str = "";
-    // $.each(direction_val, function(key, val) {
-    //         if (key !== 'seed' && key !== 'user_img') {
-    //             html_str += '<div style="width:20%; float: left; justify-content: center;align-items: center" >\n' +
-    //                 '                            <button class="btn-primary" style="height:70%; width:40%; margin-left:5%; margin-top:1%;margin-bottom:1%;font-family: 微软雅黑;font-size: large;float: left; border:medium none; border-radius: 5px;">&nbsp;' + key + '&nbsp;</button>\n' +
-    //                 '                            <input type="number" class="face_param" id=' + key + ' value=' + val + ' max="99" min="-99" style="height:70%; width:20%; margin-top:1%; margin-bottom:1%; font-family: 微软雅黑; font-size: large; text-align:center; border-radius: 5px;">\n' +
-    //                 '                        </div>'
-    //         }
 
-    //     })
-    // border-bottom: #1b1e21 dashed; 
-    // html_str += '<div style="width:20%; float: left; justify-content: center;align-items: center" >\n' +
-    //     '                            <button class="btn-primary" style="height:70%; width:40%; border-radius: 5px; margin-left:5%; margin-top:1%;margin-bottom:1%;font-family: 微软雅黑;font-size: large;float: left">seed</button>\n' +
-    //     '                            <input type="number" class="face_param" id="seed" value=0 min="0" max="9999" style="height:70%; width:20%; border-radius: 5px; margin-top:1%;margin-bottom:1%;font-family: 微软雅黑;font-size: large; text-align:center;">\n' +
-    //     '                        </div>'
     html_str += '<div style="width:35%; float: left;border-bottom: #1b1e21 ;justify-content: center;align-items: center" >\n' +
         '                            <button class="btn-primary" style="margin-left:1%;margin-top:1%;margin-bottom:1%;font-family: 微软雅黑;font-size: large;float: left;width:70%">select network</button>\n' +
         '                            <select id="network" name="network">' +
@@ -47,6 +40,27 @@ $(function() {
         '                                <button id="image_generate" class="btn-warning" style="height:70%; width:100%; margin-left:5%; margin-top:1%; margin-bottom:1%;font-family: 微软雅黑; font-size: large;float: left; border:medium none; border-radius: 5px;">&nbsp;generate&nbsp;&nbsp;➤&nbsp;</button>\n' +
         '                            </div>'
     $('#gan-param-set').html(html_str);
+
+    html_str = "";
+
+    html_str += '<div style="width:35%; float: left;border-bottom: #1b1e21 ;justify-content: center;align-items: center" >\n' +
+        '                            <button class="btn-primary" style="margin-left:1%;margin-top:1%;margin-bottom:1%;font-family: 微软雅黑;font-size: large;float: left;width:70%">select network</button>\n' +
+        '                            <select id="network_2" name="network">' +
+        '<option value="RealESRGAN_x2plus.pth">RealESRGAN_x2plus</option>' +
+        '<option value="RealESRGAN_x4plus.pth">RealESRGAN_x4plus</option>' +
+        '<option value="RealESRGAN_x4plus_anime_6B.pth">RealESRGAN_x4plus_anime_6B</option>' +
+        '</select>\n' +
+        '                        </div>'
+    html_str += '<div style="width:35%; float: left;border-bottom: #1b1e21 ;justify-content: center;align-items: center" >\n' +
+        '                            <button class="btn-primary" style="margin-left:1%;margin-top:1%;margin-bottom:1%;font-family: 微软雅黑;font-size: large;float: left;width:70%">face enhance</button><Br/><Br/>' +
+        '                            <input type="radio" name="face_enhance" value="1" checked="checked"><span>是</span>\n' +
+        '                            <input type="radio" name="face_enhance" value="0"><span>否</span>\n' +
+        '                        </div>'
+    html_str +=
+        '                            <div style="width:30%; float: left;justify-content: center;align-items: center" >\n' +
+        '                                <button id="video_generate" class="btn-warning" style="height:70%; width:100%; margin-left:5%; margin-top:1%; margin-bottom:1%;font-family: 微软雅黑; font-size: large;float: left; border:medium none; border-radius: 5px;">&nbsp;generate&nbsp;&nbsp;➤&nbsp;</button>\n' +
+        '                            </div>'
+    $('#gan-param-set-2').html(html_str);
     // 加载按键信息
     set_click_response();
     get_base_info();
@@ -63,7 +77,6 @@ function get_base_info() {
             //每次加载时重置一些参数
 
             var img_list = data['img_list'];
-            console.log("imgs", img_list)
             $('#current-image').empty();
 
             $.each(img_list, function(i, img_name) {
@@ -90,6 +103,34 @@ function get_base_info() {
                             current_image = selected_img;
                         }
 
+                    }
+                    // console.log(current_video);
+                }
+            });
+
+            var video_list = data['video_list'];
+            $('#current-video').empty();
+
+            $.each(video_list, function(i, vid_name) {
+                $("#current-video").append("<option value=" + vid_name + ">" + vid_name + "</option>");
+            });
+            $("#current-video").append("<option value=''></option>");
+            $('#current-video').on('change', function(e) {
+                if (e.originalEvent) {
+                    let selected_video = $(this).find("option:selected").val();
+                    if (selected_video !== current_video) {
+                        var video_url = user_video_dir + selected_video;
+                        var video_div = document.getElementById("res_video");
+                        var embed = video_div.getElementsByTagName('embed')[0];
+                        var hasembed = embed ? true : false;
+                        if (hasembed) {
+                            //清空父元素下的所有内容，保证始终都是有一个音频链接
+                            video_div.innerHTML = '';
+                        }
+                        var video = document.createElement('embed');
+                        video.src = video_url;
+                        video_div.appendChild(video);
+                        current_video = selected_video;
                     }
                     // console.log(current_video);
                 }
@@ -153,9 +194,9 @@ function upload_image() {
 
 // generate images
 function generate_image() {
-    $('.face_param').each(function() {
-        direction_val[$(this).attr('id')] = $(this).val()
-    })
+    // $('.face_param').each(function() {
+    //     direction_val[$(this).attr('id')] = $(this).val()
+    // })
     var network_selected = $('#network').find("option:selected").val()
     direction_val['model'] = network_selected
     var enhance_selected = $("input[type='radio']:checked").val();
@@ -172,8 +213,7 @@ function generate_image() {
         cache: false,
         data: post_data,
         success: function(data) {
-            var fake_img = fake_imgs_dir +
-                current_image.replace(".jpg","").replace(".png","").replace(".jpeg","") + '_' + network_selected + '_' + enhance_selected + '.png'
+            var fake_img = fake_imgs_dir + network_selected + '_' + enhance_selected + "_" + current_image
 
             $('#fake_img').attr("src", fake_img);
             var img = new Image()
@@ -189,6 +229,72 @@ function generate_image() {
                 // console.log(realWidth,realHeight,windowW,windowH,scale)
                 $('#fake_img').css({ "width": realWidth / scale, "height": realHeight / scale });
             }
+            alert("generate success!")
+        },
+        error: function(data) {
+            alert("出现错误，请联系管理员！");
+        }
+    })
+
+}
+
+// upload videos
+function upload_video() {
+    //首先监听input框的变动，选中一个新的文件会触发change事件
+    document.querySelector("#video_file").addEventListener("change", function() {
+        //获取到选中的文件
+        var file = document.querySelector("#video_file").files[0];
+
+        //创建formdata对象
+        var formdata = new FormData();
+        formdata.append("file", file);
+        //创建xhr，使用ajax进行文件上传
+        var xhr = new XMLHttpRequest();
+        xhr.open("post", "/realesran/upload_video/");
+        //回调
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                alert("上传成功！");
+                get_base_info();
+            }
+        }
+        //获取上传的进度
+        xhr.upload.onprogress = function(event) {
+            if (event.lengthComputable) {
+                var percent = event.loaded / event.total * 100;
+                document.querySelector("#up_progress_video .progress-item").style.width = percent + "%";
+            }
+        }
+        //将formdata上传
+        xhr.send(formdata);
+    });
+}
+
+// generate videos
+function generate_video() {
+     var network_selected = $('#network_2').find("option:selected").val();
+    direction_val['model'] = network_selected;
+    var enhance_selected = $("input[type='radio']:checked").val();
+    direction_val['face_enhance'] = enhance_selected==="1"
+    direction_val['user_img'] = current_video
+    var post_data = JSON.stringify(direction_val)
+
+    $.ajax({
+        url: "/realesran/generate_img/",
+        type: "POST",
+        cache: false,
+        data: post_data,
+        success: function(data) {
+            var blend_video = res_video_dir + network_selected + '_' + enhance_selected +"_" +current_video
+            var blend_show_div = document.getElementById("res_video");
+            var embed = blend_show_div.getElementsByTagName("embed")[0];
+            var hasembed = embed ? true : false;
+            if (hasembed) {
+                blend_show_div.innerHTML = '';
+            }
+            var video = document.createElement("embed");
+            video.src = blend_video;
+            blend_show_div.appendChild(video);
             alert("generate success!")
         },
         error: function(data) {

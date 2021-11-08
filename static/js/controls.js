@@ -4,7 +4,7 @@ all_model_states = {
     "realesrgan":false,
     "stylegan":false,
     "stargan":false,
-    "wav2lip": false,
+    "MakeItTalk": false,
     "deoldify": false,
     "debvc":false,
     "firstOrder": false,
