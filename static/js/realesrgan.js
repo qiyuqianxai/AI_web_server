@@ -120,7 +120,7 @@ function get_base_info() {
                     let selected_video = $(this).find("option:selected").val();
                     if (selected_video !== current_video) {
                         var video_url = user_video_dir + selected_video;
-                        var video_div = document.getElementById("res_video");
+                        var video_div = document.getElementById("user_video");
                         var embed = video_div.getElementsByTagName('embed')[0];
                         var hasembed = embed ? true : false;
                         if (hasembed) {
@@ -154,6 +154,14 @@ function set_click_response() {
 
     $('#image_generate').blur().on("click", function() {
         generate_image();
+    })
+
+    $('#upload_video').blur().on("click", function() {
+        upload_video();
+    })
+
+    $('#video_generate').blur().on("click", function() {
+        generate_video();
     })
 
 }
