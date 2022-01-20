@@ -1,1 +1,1 @@
-{"actionReg":false,"realesrgan":true,"stylegan":false,"stargan":false,"debvc":false,"deoldify":false,"firstOrder":false,"MakeItTalk":false}
+{"actionReg":false,"realesrgan":false,"stylegan":false,"stargan":false,"debvc":false,"deoldify":false,"firstOrder":false,"MakeItTalk":false,"fireDetect":true}

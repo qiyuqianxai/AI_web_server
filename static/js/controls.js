@@ -8,6 +8,7 @@ all_model_states = {
     "deoldify": false,
     "debvc":false,
     "firstOrder": false,
+    "fireDetect":false
 }
 
 

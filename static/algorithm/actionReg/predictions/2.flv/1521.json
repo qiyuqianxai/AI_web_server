@@ -1,0 +1,73 @@
+{
+    "action_analysis": [
+        [
+            "phone",
+            "2"
+        ],
+        [
+            "clap",
+            "0"
+        ],
+        [
+            "walk",
+            "1"
+        ],
+        [
+            "smoke",
+            "0"
+        ],
+        [
+            "",
+            "0"
+        ],
+        [
+            "stand",
+            "1"
+        ],
+        [
+            "climb",
+            "0"
+        ],
+        [
+            "wave",
+            "1"
+        ],
+        [
+            "other",
+            "0"
+        ]
+    ],
+    "expression_analysis": [
+        [
+            "nature",
+            "2"
+        ],
+        [
+            "happy",
+            "0"
+        ],
+        [
+            "amazing",
+            "1"
+        ],
+        [
+            "angry",
+            "0"
+        ]
+    ],
+    "attention_analysis": [
+        [
+            "认真",
+            "0"
+        ],
+        [
+            "一般",
+            "0"
+        ],
+        [
+            "不认真",
+            "3"
+        ]
+    ],
+    "person_num": 2
+}

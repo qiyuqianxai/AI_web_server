@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>AI - Fire Detect</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="OneTech shop project">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link rel="stylesheet" type="text/css" href="styles/bootstrap4/bootstrap.min.css">
+    <link href="plugins/fontawesome-free-5.0.1/css/fontawesome-all.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/owl.carousel.css">
+    <link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/owl.theme.default.css">
+    <link rel="stylesheet" type="text/css" href="plugins/OwlCarousel2-2.2.1/animate.css">
+    <link rel="stylesheet" type="text/css" href="styles/product_styles.css">
+    <link rel="stylesheet" type="text/css" href="styles/product_responsive.css">
+    <link rel="shortcut icon" type="image/x-icon" href="images/logo.ico" media="screen" />
+</head>
+
+
+<body>
+
+    <style type="text/css">
+        .btn-warning {
+            border: 0;
+            border-radius: 50px;
+            color: white;
+            background: #5f55af;
+            text-transform: uppercase;
+            background: linear-gradient(to right, #f72585 50%, #5f55af 50%);
+            background-size: 200% 100%;
+            background-position: right bottom;
+            transition: all 1.2s ease;
+        }
+        
+        button:hover {
+            background-position: left bottom;
+        }
+    </style>
+
+    <!-- <div class="super_container" style="height: 100%;"> -->
+
+    <!-- Header -->
+
+    <header class="header">
+
+        <!-- Top Bar -->
+
+        <div class="top_bar">
+            <div class="container">
+
+                <div class="row">
+                    <div class="top_bar_contact_item">
+                        <div class="top_bar_icon"><img src="images/logo.ico" alt=""></div><a href="index.html" style="font-size: large;font-weight: bolder">home</a></div>
+
+                    <div class="col d-flex flex-row">
+                        <div class="top_bar_contact_item">
+                            <div class="top_bar_icon"><img src="images/phone.png" alt=""></div>+19115621964</div>
+                        <div class="top_bar_contact_item">
+                            <div class="top_bar_icon"><img src="images/mail.png" alt=""></div><a href="mailto:pengyubo@126.com">pengyubo@126.com</a></div>
+                        <div class="top_bar_content ml-auto">
+
+                            <div class="top_bar_user">
+                                <div class="user_icon"><img src="images/user.svg" alt=""></div>
+                                <div><a href="#">Register</a></div>
+                                <div><a href="#">Sign in</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+<!--        <nav class="main_nav">-->
+<!--            <div class="container">-->
+
+<!--                &lt;!&ndash; Main Nav Menu &ndash;&gt;-->
+<!--                <div class="main_nav_menu ml-auto col-lg-12">-->
+<!--                    <ul class="standard_dropdown main_nav_dropdown">-->
+<!--                        <li class="col-lg-2">-->
+<!--                            <a href="/index">home<i class="fas fa-chevron-down"></i></a>-->
+<!--                        </li>-->
+<!--                        -->
+
+
+<!--                    </ul>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--        </nav>-->
+        <!-- Header Main -->
+        <!-- Menu -->
+
+    </header>
+
+    <!-- Single Product -->
+
+    <div class="main_area" style="margin-top: 2%;margin-bottom: 0%; width: 100%">
+
+        <div class="container" style="min-width: 100%; height:120%;">
+
+
+
+            <!--                     <div style="height: 100%; border: red solid;align-items: center;align-content: center">
+                                <img id="fake_img" src="images/cover.jpg" alt="" style="width: 100%; height: 100%">
+                            </div> -->
+
+            <h2>——————————————————————————— Image Detection ———————————————————————————</h2>
+            <div class="row" style="margin-left: 0.5%; margin-right:0.5%; min-width: 94%; border: #0e8ce4 solid; border-radius: 16px;">
+                <!-- Selected Image Display -->
+                <div class="col-lg-6 order-lg-2 order-1" style="height: 140%;">
+                    <div id="image_info" class="row" style="margin-left: 1%;margin-top: 2%;margin-bottom: 1%;">
+                        <h3>select image:&nbsp;</h3>
+                        <div style="width: 10%; margin-bottom: 2%; position:relative; z-index:10;">
+                            <select class="form-control" id="current-image" name="Picture" style="font-family: 微软雅黑; margin-left: 0px; position:relative; z-index:10;">
+						</select>
+                        </div>
+                        <h3 style="margin-left: 2%">upload image:&nbsp;</h3>
+                        <div id="upload_image" style="margin-bottom: 2%;width:20%">
+
+                            <input type="file" id="file"><br>
+                            <div id="up_progress">
+                                <div class="progress-item"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+                    <h4>Original picture:</h4>
+                    <div style="height: 100%; align-items: center; align-content: center; position:relative; z-index:1;margin-top: 22%;">
+                        <img id="user_img" src="images/cover.jpg" alt="" style="margin-top:-20%; display: block; width: 100%; height: 100%; position:relative; z-index:30;">
+                    </div>
+                </div>
+                <div class="col-lg-6 order-lg-2 order-2" style="height: 140%;">
+
+                    <div id="image_info_2" class="row" style="margin-left: 1%;margin-top: 2%;margin-bottom: 5%;">
+                        <div id="gan-param-set" class="row" style="margin-top:0.4%; margin-bottom:1%; margin-right:0.1%;">
+                        </div>
+                    </div>
+                    <h4>Result picture:</h4>
+                    <div style="height: 100%; align-items: center; align-content: center; position:relative; z-index:1;">
+                        <img id="fake_img" src="images/cover.jpg" alt="" style="margin-top:2%; display: block; width: 100%; height: 100%; position:relative; z-index:30;">
+                    </div>
+                </div>
+
+                <!-- Description -->
+
+                <!--			<div class="row" style="min-width: 105%;">-->
+                <!--				&lt;!&ndash; Selected Image Display &ndash;&gt;-->
+                <!--				<div class="col-lg-5 order-lg-2 order-1" style="height: 100%;margin-left: 5%">-->
+                <!--					<div>-->
+                <!--                        <img id="src_img" src="images/cover.jpg" alt="" style="width: 100%;">-->
+                <!--                    </div>-->
+                <!--				</div>-->
+                <!--                <div class="col-lg-0 order-lg-2 order-1">-->
+                <!--                    <button class="btn-warning" id="convert" style="align-self: center;width: 100%;height: 10%;margin-top: 300%">convert</button>-->
+                <!--                </div>-->
+                <!--                <div class="col-lg-5 order-lg-2 order-3" style="height: 100%;margin-right: 5%;">-->
+                <!--                    <div>-->
+                <!--                        <img id="gan_img" src="images/cover.jpg" alt="" style="width: 100%">-->
+                <!--                    </div>-->
+                <!--                </div>-->
+
+                <!--				&lt;!&ndash; Description &ndash;&gt;-->
+
+                <!--			</div>-->
+            </div>
+            <h2 style="padding-top: 5%">——————————————————————————— Video Detection ———————————————————————————</h2>
+            <div class="row" style="margin-left: 0.5%; margin-right:0.5%; min-width: 94%; border: #0e8ce4 solid; border-radius: 16px;">
+                <!-- Selected Image Display -->
+                <div class="col-lg-6 order-lg-2 order-1" style="height: 140%;align-items: center; align-content: center; position:relative;">
+                    <div id="video_info" class="row" style="margin-left: 1%;margin-top: 2%;margin-bottom: 1%;">
+                        <h3>select video:&nbsp;</h3>
+                        <div style="width: 10%; margin-bottom: 2%; position:relative; z-index:10;">
+                            <select class="form-control" id="current-video" name="Video" style="font-family: 微软雅黑; margin-left: 0px; position:relative; z-index:10;">
+                            </select>
+                        </div>
+                        <h3 style="margin-left: 2%">upload video:&nbsp;</h3>
+                        <div id="upload_video" style="margin-bottom: 2%;width:20%">
+
+                            <input type="file" id="video_file"><br>
+                            <div id="up_progress_video">
+                                <div class="progress-item"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+                    <h4>Original video:</h4>
+                    <div id="user_video" style="height: 480px;width: 100%; align-items: center; align-content: center; position:relative; z-index:1;">
+<!--                        <img  src="images/cover.jpg" alt="" style="margin-top:-20%; display: block; width: 100%; height: 100%; position:relative; z-index:30;">-->
+                    </div>
+                </div>
+                <div class="col-lg-6 order-lg-2 order-2" style="height: 140%;align-items: center; align-content: center; position:relative;">
+
+                    <div id="video_info_2" class="row" style="margin-left: 1%;margin-top: 2%;margin-bottom: 5%;">
+                        <div id="gan-param-set-2" class="row" style="margin-top:0.4%; margin-bottom:1%; margin-right:0.1%;">
+                        </div>
+                    </div>
+                    <h4>Result video:</h4>
+                    <div id="res_video" style="height: 480px;width: 100%; align-items: center; align-content: center; position:relative; z-index:1;">
+<!--                        <img id="fake_img" src="images/cover.jpg" alt="" style="margin-top:2%; display: block; width: 100%; height: 100%; position:relative; z-index:30;">-->
+                    </div>
+                </div>
+
+                <!-- Description -->
+
+                <!--			<div class="row" style="min-width: 105%;">-->
+                <!--				&lt;!&ndash; Selected Image Display &ndash;&gt;-->
+                <!--				<div class="col-lg-5 order-lg-2 order-1" style="height: 100%;margin-left: 5%">-->
+                <!--					<div>-->
+                <!--                        <img id="src_img" src="images/cover.jpg" alt="" style="width: 100%;">-->
+                <!--                    </div>-->
+                <!--				</div>-->
+                <!--                <div class="col-lg-0 order-lg-2 order-1">-->
+                <!--                    <button class="btn-warning" id="convert" style="align-self: center;width: 100%;height: 10%;margin-top: 300%">convert</button>-->
+                <!--                </div>-->
+                <!--                <div class="col-lg-5 order-lg-2 order-3" style="height: 100%;margin-right: 5%;">-->
+                <!--                    <div>-->
+                <!--                        <img id="gan_img" src="images/cover.jpg" alt="" style="width: 100%">-->
+                <!--                    </div>-->
+                <!--                </div>-->
+
+                <!--				&lt;!&ndash; Description &ndash;&gt;-->
+
+                <!--			</div>-->
+            </div>
+        </div>
+    </div>
+    <!-- </div> -->
+    <!-- Copyright -->
+
+    <div class="copyright" style="position: absolute;">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+
+                    <div class="copyright_container d-flex flex-sm-row flex-column align-items-center justify-content-start">
+                        <div class="copyright_content" style="margin-left: 30%">
+                            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                            Copyright &copy;
+                            <script>
+                                document.write(new Date().getFullYear());
+                            </script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+                            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="styles/bootstrap4/popper.js"></script>
+<script src="styles/bootstrap4/bootstrap.min.js"></script>
+<script src="plugins/greensock/TweenMax.min.js"></script>
+<script src="plugins/greensock/TimelineMax.min.js"></script>
+<script src="plugins/scrollmagic/ScrollMagic.min.js"></script>
+<script src="plugins/greensock/animation.gsap.min.js"></script>
+<script src="plugins/greensock/ScrollToPlugin.min.js"></script>
+<script src="plugins/OwlCarousel2-2.2.1/owl.carousel.js"></script>
+<script src="plugins/easing/easing.js"></script>
+<script src="js/highcharts.js"></script>
+<script src="js/fireDetect.js"></script>
+<script src="js/controls.js"></script>
+
+</html>

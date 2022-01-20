@@ -5,6 +5,7 @@ import (
 	"awesomeProject/algorithm_utils/MakeItTalk"
 	"awesomeProject/algorithm_utils/actionReg"
 	"awesomeProject/algorithm_utils/colorImage"
+	"awesomeProject/algorithm_utils/fireDetect"
 	"awesomeProject/algorithm_utils/firstOrder"
 	"awesomeProject/algorithm_utils/realesrgan"
 	"awesomeProject/algorithm_utils/stargan"
@@ -30,6 +31,7 @@ type model_states struct {
 	Deoldify   bool `json:"deoldify"`
 	FirstOrder bool `json:"firstOrder"`
 	MakeItTalk   bool `json:"MakeItTalk"`
+	FireDetect bool `json:"fireDetect"`
 }
 var model_stat model_states
 
@@ -59,8 +61,8 @@ func main() {
 		c.Redirect(http.StatusFound, "/static/stylegan.html")
 	})
 
-	r.GET("/realesran", func(c *gin.Context) {
-		c.Redirect(http.StatusFound, "/static/realesran.html")
+	r.GET("/realesrgan", func(c *gin.Context) {
+		c.Redirect(http.StatusFound, "/static/realesrgan.html")
 	})
 
 	r.GET("/actionReg", func(c *gin.Context) {
@@ -77,6 +79,10 @@ func main() {
 
 	r.GET("/activateImg", func(c *gin.Context) {
 		c.Redirect(http.StatusFound, "/static/activateImg.html")
+	})
+
+	r.GET("/fireDetect", func(c *gin.Context) {
+		c.Redirect(http.StatusFound, "/static/fireDetect.html")
 	})
 
 	r.POST("/update_models_states", func(c *gin.Context) {
@@ -113,6 +119,7 @@ func main() {
 		// time.Sleep(time.Duration(wait_time)*time.Second);
 		c.JSON(200,gin.H{})
 	})
+
 	// ################################## define stylegan map #########################################
 	// 读取配置的路径5
 
@@ -208,11 +215,11 @@ func main() {
 	})
 
 
-	// ################################### define realesran map ##########################################
+	// ################################### define realesrgan map ##########################################
 
 	realesregan_config := realesrgan.Laod_config()
 
-	r.GET("/realesran/get_base_info", func(c *gin.Context) {
+	r.GET("/realesrgan/get_base_info", func(c *gin.Context) {
 		_, err := os.Stat(realesregan_config.User_img_dir)
 		var user_imgs []string
 		if err == nil {
@@ -259,7 +266,7 @@ func main() {
 	})
 
 	// upload image
-	r.POST("/realesran/upload_file/", func(c *gin.Context) {
+	r.POST("/realesrgan/upload_file/", func(c *gin.Context) {
 		upfile, err := c.FormFile("file")
 		if err != nil {
 			return
@@ -287,7 +294,7 @@ func main() {
 	})
 
 	// upload videos
-	r.POST("/realesran/upload_video/", func(c *gin.Context) {
+	r.POST("/realesrgan/upload_video/", func(c *gin.Context) {
 		upfile, err := c.FormFile("file")
 		if err != nil {
 			return
@@ -314,7 +321,7 @@ func main() {
 	})
 
 	// generate image
-	r.POST("/realesran/generate_img/", func(c *gin.Context) {
+	r.POST("/realesrgan/generate_img/", func(c *gin.Context) {
 		err := c.BindJSON(&realesrgan.Realesrgan_msg)
 		if err != nil {
 			log.Println(err)
@@ -767,7 +774,6 @@ func main() {
 	})
 
 
-
 	// ######################################## define firstOrder ################################################
 
 	firstOrder_config := firstOrder.Laod_config();
@@ -1054,6 +1060,146 @@ func main() {
 		}
 		time.Sleep(time.Duration(wait_time)*time.Second);
 
+		c.JSON(200,gin.H{})
+	})
+
+	// ############################################## define fireDetect ##############################################
+	fireDetect_config := fireDetect.Laod_config()
+
+	r.GET("/fireDetect/get_base_info", func(c *gin.Context) {
+		_, err := os.Stat(fireDetect_config.User_img_dir)
+		var user_imgs []string
+		if err == nil {
+			f_list,err := ioutil.ReadDir(fireDetect_config.User_img_dir)
+			if err!=nil{
+				log.Fatal(err)
+			} else {
+				for _,f := range f_list{
+					user_imgs = append(user_imgs, f.Name())
+				}
+			}
+		}
+
+		if os.IsNotExist(err) {
+			err := os.Mkdir(fireDetect_config.User_img_dir, os.ModePerm)
+			if err != nil {
+				return
+			}
+		}
+
+		var user_videos []string
+		if err == nil {
+			f_list,err := ioutil.ReadDir(fireDetect_config.User_video_dir)
+			if err!=nil{
+				log.Fatal(err)
+			} else {
+				for _,f := range f_list{
+					user_videos = append(user_videos, f.Name())
+				}
+			}
+		}
+
+		if os.IsNotExist(err) {
+			err := os.Mkdir(fireDetect_config.User_video_dir, os.ModePerm)
+			if err != nil {
+				return
+			}
+		}
+
+		c.JSON(200,gin.H{
+			"img_list":user_imgs,
+			"video_list":user_videos,
+		})
+	})
+
+	// upload image
+	r.POST("/fireDetect/upload_file/", func(c *gin.Context) {
+		upfile, err := c.FormFile("file")
+		if err != nil {
+			return
+		}
+		img_name := upfile.Filename
+		log.Println(img_name)
+		if strings.HasSuffix(img_name,".jpeg") || strings.HasSuffix(img_name,".jpg") || strings.HasSuffix(img_name,".png"){
+			save_pth := path.Join(fireDetect_config.User_img_dir,img_name)
+			_, err = os.Stat(save_pth)
+			if !os.IsNotExist(err) {
+				err := os.Remove(save_pth)
+				if err != nil {
+					return
+				}
+			}
+
+			err = c.SaveUploadedFile(upfile, save_pth)
+			if err != nil {
+				return
+			}
+			c.JSON(200,gin.H{})
+		} else{
+			c.JSON(304,gin.H{})
+		}
+	})
+
+	// upload videos
+	r.POST("/fireDetect/upload_video/", func(c *gin.Context) {
+		upfile, err := c.FormFile("file")
+		if err != nil {
+			return
+		}
+		video_name := upfile.Filename
+		if strings.HasSuffix(video_name,".mp4") || strings.HasSuffix(video_name,".flv") || strings.HasSuffix(video_name,".avi"){
+			save_pth := path.Join(fireDetect_config.User_video_dir,video_name)
+			_, err = os.Stat(save_pth)
+			if !os.IsNotExist(err) {
+				err := os.Remove(save_pth)
+				if err != nil {
+					return
+				}
+			}
+
+			err = c.SaveUploadedFile(upfile, save_pth)
+			if err != nil {
+				return
+			}
+			c.JSON(200,gin.H{})
+		} else{
+			c.JSON(304,gin.H{})
+		}
+	})
+
+	// generate image
+	r.POST("/fireDetect/generate_img/", func(c *gin.Context) {
+		err := c.BindJSON(&fireDetect.FiredetectMsg)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		//log.Printf("%v",&msg)
+
+		// 写json文件
+		_, err = os.Stat(fireDetect_config.FireDetect_message_path)
+		var file *os.File
+		if err == nil {
+			file, err = os.OpenFile(fireDetect_config.FireDetect_message_path,os.O_WRONLY|os.O_TRUNC,0666)
+			if err != nil {
+				log.Println(err)
+			}
+		}else {
+			file, err = os.Create(fireDetect_config.FireDetect_message_path)
+			if err != nil {
+				log.Println(err)
+			}
+		}
+		enc := json.NewEncoder(file)
+		err = enc.Encode(fireDetect.FiredetectMsg)
+		if err != nil {
+			log.Println(err)
+		}
+		err = file.Close()
+		if err != nil {
+			log.Println(err)
+		}
+		time.Sleep(time.Duration(wait_time)*time.Second);
 		c.JSON(200,gin.H{})
 	})
 

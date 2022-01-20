@@ -174,7 +174,7 @@ function set_click_response() {
         if (!play_vedio)
         {
             play_vedio = true;
-            play_rate = normal_rate;
+            // play_rate = normal_rate;
             update_play_info();
         }
 

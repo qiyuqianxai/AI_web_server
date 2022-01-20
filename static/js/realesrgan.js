@@ -69,7 +69,7 @@ $(function() {
 // load src_imgs list
 function get_base_info() {
     $.ajax({
-        url: "/realesran/get_base_info/",
+        url: "/realesrgan/get_base_info/",
         contentType: "application/json; charset=utf-8",
         type: "GET",
         cache: false,
@@ -180,7 +180,7 @@ function upload_image() {
         formdata.append("file", file);
         //创建xhr，使用ajax进行文件上传
         var xhr = new XMLHttpRequest();
-        xhr.open("post", "/realesran/upload_file/");
+        xhr.open("post", "/realesrgan/upload_file/");
         //回调
         xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4 && xhr.status == 200) {
@@ -216,7 +216,7 @@ function generate_image() {
     var post_data = JSON.stringify(direction_val)
 
     $.ajax({
-        url: "/realesran/generate_img/",
+        url: "/realesrgan/generate_img/",
         type: "POST",
         cache: false,
         data: post_data,
@@ -258,7 +258,7 @@ function upload_video() {
         formdata.append("file", file);
         //创建xhr，使用ajax进行文件上传
         var xhr = new XMLHttpRequest();
-        xhr.open("post", "/realesran/upload_video/");
+        xhr.open("post", "/realesrgan/upload_video/");
         //回调
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
@@ -288,7 +288,7 @@ function generate_video() {
     var post_data = JSON.stringify(direction_val)
 
     $.ajax({
-        url: "/realesran/generate_img/",
+        url: "/realesrgan/generate_img/",
         type: "POST",
         cache: false,
         data: post_data,
