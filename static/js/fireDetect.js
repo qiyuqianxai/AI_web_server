@@ -3,6 +3,8 @@ current_image = ""
 current_video = ""
 direction_val = {
     "user_img":"2.jpg",
+    "fire":false,
+    "smoke":false
 }
 
 user_imgs_dir = "algorithm/fireDetect/user_imgs/" //上传图片地址
@@ -19,6 +21,9 @@ $(function() {
 
 
     var html_str = "";
+    html_str += '<div style="font-size: x-large;width:80%; float: left;border-bottom: #1b1e21 ;justify-content: center;align-items: center">\n' +
+        '                            <input id="detect-fire-img" type="checkbox" value="fire" name="fire">fire' +
+        '&nbsp;<input id="detect-smoke-img" type="checkbox" value="smoke" name="smoke">smoke</div>'
 
     html_str +=
         '                            <div id="circle-btn" style="width:100%; float: left;justify-content: center;align-items: center" >\n' +
@@ -27,7 +32,9 @@ $(function() {
     $('#gan-param-set').html(html_str);
 
     html_str = "";
-
+    html_str += '<div style="font-size:x-large;width:80%; float: left;border-bottom: #1b1e21 ;justify-content: center;align-items: center" >\n' +
+        '                            <input id="detect-fire-video" type="checkbox" value="fire" name="fire">fire' +
+        '&nbsp;<input id="detect-smoke-video" type="checkbox" value="smoke" name="smoke">smoke</div>'
 
     html_str +=
         '                            <div style="width:100%; float: left;justify-content: center;align-items: center" >\n' +
@@ -177,10 +184,8 @@ function upload_image() {
 
 // generate images
 function generate_image() {
-    // $('.face_param').each(function() {
-    //     direction_val[$(this).attr('id')] = $(this).val()
-    // })
-
+    direction_val['fire'] = $('#detect-fire-img').prop('checked')
+    direction_val['smoke'] = $('#detect-smoke-img').prop('checked')
     direction_val['user_img'] = current_image
     var post_data = JSON.stringify(direction_val)
 
@@ -191,7 +196,18 @@ function generate_image() {
         data: post_data,
         success: function(data) {
             var fake_img = fake_imgs_dir + current_image
-
+            if(direction_val['fire']&&direction_val['smoke']){
+                fake_img = fake_imgs_dir + "fire_smoke_"+current_image
+            }
+            else {
+                if(direction_val['fire']){
+                    fake_img = fake_imgs_dir + "fire_"+current_image
+                }else {
+                    if(direction_val['smoke']){
+                        fake_img = fake_imgs_dir + "smoke_"+current_image
+                    }
+                }
+            }
             $('#fake_img').attr("src", fake_img);
             var img = new Image()
                 // 改变图片的src
@@ -249,6 +265,8 @@ function upload_video() {
 
 // generate videos
 function generate_video() {
+    direction_val['fire'] = $('#detect-fire-video').prop('checked')
+    direction_val['smoke'] = $('#detect-smoke-video').prop('checked')
     direction_val['user_img'] = current_video
     var post_data = JSON.stringify(direction_val)
 
@@ -259,6 +277,18 @@ function generate_video() {
         data: post_data,
         success: function(data) {
             var blend_video = res_video_dir + current_video
+            if(direction_val['fire']&&direction_val['smoke']){
+                blend_video = res_video_dir + "fire_smoke_"+current_video
+            }
+            else {
+                if(direction_val['fire']){
+                    blend_video = res_video_dir + "fire_"+current_video
+                }else {
+                    if(direction_val['smoke']){
+                        blend_video = res_video_dir + "smoke_"+current_video
+                    }
+                }
+            }
             var blend_show_div = document.getElementById("res_video");
             var embed = blend_show_div.getElementsByTagName("embed")[0];
             var hasembed = embed ? true : false;

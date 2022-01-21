@@ -12,7 +12,9 @@ var fireDetect_config fireDetect_info
 
 // send gan-nn param
 type fireDetect_message struct {
-	UserImg          string `json:"user_img"`
+	UserImg string `json:"user_img" :"user_img"`
+	Smoke   bool   `json:"smoke" :"smoke"`
+	Fire    bool   `json:"fire" :"fire"`
 	//Model 			 string `json:"model"`
 }
 var FiredetectMsg fireDetect_message
